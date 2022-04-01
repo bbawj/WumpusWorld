@@ -1,40 +1,67 @@
 :- abolish(current/2).
-:- abolish(wumpus/2).
+:- abolish(actual_wumpus/2).
 :- abolish(stench/1).
-:- abolish(pit/2).
+:- abolish(tingle/1).
+:- abolish(actual_confundus/2).
 :- abolish(gold/2).
 :- abolish(grab/2).
-:- abolish(visited/1).
 :- abolish(shooted/2).
+:- abolish(visited/1).
+:- abolish(is_bump/1).
 :- abolish(wall/1).
+:- abolish(is_confounded/1).
 
 :- dynamic([
   current/2,
-  wumpus/2,
+  actual_wumpus/2,
   stench/1,
-  pit/2,
+  tingle/1,
+  actual_confundus/2,
   gold/2,
   grab/2,
   shooted/2,
   visited/1,
   is_bump/1,
-  wall/1
+  wall/1,
+  is_confounded/1
 ]).
 
 % Defines the world NxM matrix.
 world(7, 6).
 gold(2,3).
-wumpus(1,3).
+actual_wumpus(1,3).
+actual_confundus(2,1).
 
 % Initial player position
 current(r(1, 1), north).
 visited(r(1, 1)).
+
+reborn :- 
+  retractall(current(_,_)),
+  retractall(stench(_)),
+  retractall(visited(_)),
+  retractall(wall(_)),
+  assertz(current(r(1,1), north)).
+
+is_confounded(no).
+
+reposition(L) :- 
+  retractall(current(_,_)),
+  retractall(stench(_)),
+  retractall(visited(_)),
+  retractall(wall(_)),
+  retractall(is_confounded(_)),
+  asserta(is_confounded(yes)),
+  perceptions(L),
+  retractall(is_confounded(_)).
 
 % ---------------------------- %
 % Environment predicates       %
 % ---------------------------- %
 visited(X,Y) :- visited(r(X,Y)).
 current(X,Y,D) :- current(r(X,Y),D).
+stench(X,Y) :- stench(r(X,Y)).
+tingle(X,Y) :- tingle(r(X,Y)).
 
 has_gold(yes) :- grab(X, Y), gold(X, Y), !.
 has_gold(no).
@@ -48,21 +75,26 @@ has_arrows(yes).
 % has_glitter(yes) :- has_gold(G), G == no, current(X, Y, _), gold(X, Y), !.
 has_glitter(no).
 
-% Senses tingle if adjacent block has a pit.
-% has_tingle(yes) :-
-%   current(r(X, Y), _), N is Y + 1, pit(X, N), !;
-%   current(X, Y, _), S is Y - 1, pit(X, S), !;
-%   current(X, Y, _), E is X + 1, pit(E, Y), !;
-%   current(X, Y, _), W is X - 1, pit(W, Y), !.
+% Senses tingle if adjacent block has a confundus.
+has_tingle(yes) :-
+  current(r(X,Y), _),
+  ((N is Y + 1, actual_confundus(X, N));
+  (S is Y - 1, actual_confundus(X, S));
+  (E is X + 1, actual_confundus(E, Y));
+  (W is X - 1, actual_confundus(W, Y))),
+  add_tingle_kb(X,Y).
 has_tingle(no).
+
+add_tingle_kb(X,Y):-
+  \+ tingle(r(X,Y)) -> assertz(tingle(r(X,Y))) ; true.
 
 % Senses stench if adjacent block has the wumpus.
 has_stench(yes) :-
   current(r(X,Y), _),
-  ((N is Y + 1, wumpus(X, N));
-  (S is Y - 1, wumpus(X, S));
-  (E is X + 1, wumpus(E, Y));
-  (W is X - 1, wumpus(W, Y))),
+  ((N is Y + 1, actual_wumpus(X, N));
+  (S is Y - 1, actual_wumpus(X, S));
+  (E is X + 1, actual_wumpus(E, Y));
+  (W is X - 1, actual_wumpus(W, Y))),
   add_stench_kb(X,Y).
 has_stench(no).
 
@@ -89,12 +121,12 @@ has_scream(yes) :- is_wumpus(dead), !.
 has_scream(no).
 
 % Check player's condition
-is_player(dead) :- current(r(X, Y), _), wumpus(X, Y), !.
-% is_player(dead) :- current(X, Y, _), pit(X, Y),    !.
-is_player(alive).
+% is_player(dead) :- current(r(X, Y), _), actual_wumpus(X, Y), reborn, !.
+% is_player(confounded) :- current(r(X, Y), _), confundus(X, Y), !.
+% is_player(alive).
 
 % Check Wumpus condition
-is_wumpus(dead) :- shooted(X, Y), wumpus(X, Y), !.
+is_wumpus(dead) :- shooted(X, Y), actual_wumpus(X, Y), !.
 is_wumpus(alive).
 
 % Check if position is into map bounds.
@@ -104,8 +136,8 @@ in_bounds(X, Y) :-
   Y > 0, Y =< H.
 
 % Returns the current percetions
-perceptions([Stench, Tingle, Glitter, Bump, Scream]) :-
-  has_stench(Stench), has_tingle(Tingle), has_glitter(Glitter),
+perceptions([Confounded, Stench, Tingle, Glitter, Bump, Scream]) :-
+  is_confounded(Confounded), has_stench(Stench), has_tingle(Tingle), has_glitter(Glitter),
   is_bump(Bump), has_scream(Scream), !.
 
 move(A, L) :-
@@ -163,13 +195,13 @@ turnRight :-
 
 % Evaluates possibility of Wumpus in a certain room. Checks if all
 % adjacent rooms that were visited had stench
-possibleWumpus(X, Y) :-
+wumpus(X, Y) :-
   (certainWumpus(X,Y)  ;   
   (\+visited(r(X,Y)), getAdjacentRooms(r(X,Y),LA), trimNotVisited(LA,LT), (LT = []; checkStenchList(LT)))).
 checkStenchList([]).
 checkStenchList([H|T]) :- checkStenchList(T), stench(H).
 
-% More easily than checking for pits, as we know there is only one
+% More easily than checking for confunduss, as we know there is only one
 % Wumpus, one can mix and match adjacent rooms of two or more rooms with
 % stench. If only one room that wasnt visited remains, the Wumpus must
 % be there.
@@ -178,11 +210,39 @@ certainWumpus(X, Y) :-
    setof(R,stench(R),[H|T]), %H is going to be used as reference, and T will help
    getAdjacentRooms(H,LA), %get all adjacent rooms to stench squares
    trimVisited(LA,LAT), %get unvisited rooms adjacent to stench
-  %  trimNotAdjacent(LAT,T,LT), %remove those not adjacent to stench
    trimWall(LAT, LW),
    length(LW, 1), %If only one room is reached, that is where the wumpus is
    LW = [r(X,Y)]
    ).
+
+% Evaluates possibility of confundus in a certain room. Checks if all adjacent
+% rooms that were visited had tingles
+confundus(X,Y) :- 
+  certainConfundus(X,Y);
+  (\+visited(r(X,Y)), getAdjacentRooms(r(X,Y),LA), trimNotVisited(LA,LT), (LT = []; checkTingleList(LT))).
+checkTingleList([]).
+checkTingleList([H|T]) :- checkTingleList(T), tingle(H).
+
+% One can only be certain of a confundus position if there is a room with
+% tingle where 3 adjacent rooms were visited and don't have a confundus. The
+% pit is in the fourth room certainly.
+certainConfundus(X,Y) :-
+  getAdjacentRooms(r(X,Y),LA),
+  trimNotVisited(LA,LT),
+  checkConfundusCertainty(r(X,Y),LT).
+
+checkConfundusCertainty(_,[]) :- false.
+checkConfudusCertainty(RP,[H|T]) :-
+  tingle(H),
+  (
+      (
+      getAdjacentRooms(H,LA),
+      trimVisited(LA,LT),
+      trimWall(LT,LT2),
+      LT2 = [RP]
+      )
+      ; checkConfundusCertainty(RP,T)
+  ).
 
 %Returns list of all adjacent rooms
 getAdjacentRooms(r(X,Y),L) :-
