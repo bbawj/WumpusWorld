@@ -4,7 +4,7 @@
 :- abolish(tingle/1).
 :- abolish(actual_confundus/2).
 :- abolish(gold/2).
-:- abolish(grab/2).
+:- abolish(has_gold/1).
 :- abolish(shooted/2).
 :- abolish(visited/1).
 :- abolish(is_bump/1).
@@ -18,7 +18,7 @@
   tingle/1,
   actual_confundus/2,
   gold/2,
-  grab/2,
+  has_gold/1,
   shooted/2,
   visited/1,
   is_bump/1,
@@ -63,7 +63,6 @@ current(X,Y,D) :- current(r(X,Y),D).
 stench(X,Y) :- stench(r(X,Y)).
 tingle(X,Y) :- tingle(r(X,Y)).
 
-has_gold(yes) :- grab(X, Y), gold(X, Y), !.
 has_gold(no).
 
 has_arrows(no) :- shooted(_, _), !.
@@ -72,7 +71,8 @@ has_arrows(yes).
 % Perceptions
 % ===========
 % If has gold it has glitter.
-% has_glitter(yes) :- has_gold(G), G == no, current(X, Y, _), gold(X, Y), !.
+glitter(X,Y) :- has_gold(G), G == no, current(r(X, Y), _), gold(X, Y).
+has_glitter(yes) :- current(r(X,Y), _), glitter(X,Y), !.
 has_glitter(no).
 
 % Senses tingle if adjacent block has a confundus.
@@ -160,7 +160,8 @@ moveForward :-
   getForwardRoom(r(X,Y),D, N),
   retractall(current(_,_)),
   assertz(visited(N)),
-  asserta(current(N,D)).
+  asserta(current(N,D)),
+  write("I am at: "), write(N), write(D).
 
 turnLeft :- 
   current(r(X,Y),D),
@@ -180,6 +181,14 @@ turnRight :-
     (D = north, ND = east)),
   retractall(current(_,_)),
   asserta(current(r(X,Y),ND)).
+
+pickup :- 
+  \+ has_gold(yes),
+  current(r(X,Y), _),
+  gold(X,Y),
+  retractall(has_gold(_)),
+  assertz(has_gold(yes)),
+  write("Got the gold!").
 
 % Shoot at given position
 % shoot :- has_arrows(no), write('!: I do not have arrows anymore.'), !.
