@@ -253,6 +253,31 @@ checkConfudusCertainty(RP,[H|T]) :-
       ; checkConfundusCertainty(RP,T)
   ).
 
+% where X,Y are integers, returns true if the Agent knows or can reason that the relative
+% position (X,Y) contains neither a Wumpus nor a Confundus Portal.
+safe(X,Y) :- 
+  \+wumpus(X,Y), \+confundus(X,Y).
+
+% true if the list L contains a sequence of actions that leads the Agent to inhabit a safe and
+% non-visited location.
+explore([],r(X,Y,D)) :- safe(X,Y), \+visited(X,Y).
+explore([H|T], r(X,Y,D)) :-
+  plan(H, r(X,Y,D), r(X1,Y1,D1)),
+  explore(T, r(X1,Y1,D1)).
+  
+
+plan(A, r(X, Y, D), r(X1,Y1,D1)) :-
+  (A = moveforward -> getForwardRoomAndDirection(r(X,Y), D, r(X1,Y1,D1));
+  A = turnleft -> getTurnLeftDirection(r(X,Y,D), r(X1,Y1,D1))),
+  safe(X1,Y1),
+  \+visited(X1,Y1).
+  
+getTurnLeftDirection(r(X,Y,D), r(X,Y,ND)):-
+  (D = east, ND = north, !;
+   D = north, ND = west, !;
+   D = west, ND = south, !;
+   D = south, ND = east, !).
+
 %Returns list of all adjacent rooms
 getAdjacentRooms(r(X,Y),L) :-
   XL is X-1,
@@ -270,10 +295,16 @@ isAdjacent(r(X,Y),r(XT,YT)) :-
 
 %Returns room in front of another in a certain direction
 getForwardRoom(r(X0,Y0),D0,r(XN,YN)) :-
-  (D0 = north, XN is X0, YN is Y0+1);
-  (D0 = east, XN is X0+1, YN is Y0);
-  (D0 = south, XN is X0, YN is Y0-1);
-  (D0 = west, XN is X0-1, YN is Y0).
+  (D0 = north, XN is X0, YN is Y0+1), !;
+  (D0 = east, XN is X0+1, YN is Y0), !;
+  (D0 = south, XN is X0, YN is Y0-1), !;
+  (D0 = west, XN is X0-1, YN is Y0), !.
+
+getForwardRoomAndDirection(r(X0,Y0),D0,r(XN,YN, D0)) :-
+  (D0 = north, XN is X0, YN is Y0+1), !;
+  (D0 = east, XN is X0+1, YN is Y0), !;
+  (D0 = south, XN is X0, YN is Y0-1), !;
+  (D0 = west, XN is X0-1, YN is Y0), !.
 
 trimNotVisited([],[]). %Removes rooms that weren't visited from list of rooms
 trimNotVisited([H|T],LT) :- trimNotVisited(T,L), (visited(H) -> append([H],L,LT); LT = L).
