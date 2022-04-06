@@ -24,15 +24,20 @@ class Agent:
 
     def updateRelativeLocation(self):
         y0, x0 = self.relative_loc
+        y_m, x_m = self.map.agent_loc
         current_dir = self.direction
         if current_dir == 0:
             self.relative_loc = (y0 - 1, x0)
+            self.map.updateAgentMovement(y_m - 1, x_m)
         elif current_dir == 1:
             self.relative_loc = (y0, x0 + 1)
+            self.map.updateAgentMovement(y_m, x_m + 1)
         elif current_dir == 2:
             self.relative_loc = (y0 + 1, x0)
+            self.map.updateAgentMovement(y_m + 1, x_m)
         elif current_dir == 3:
             self.relative_loc = (y0, x0 - 1)
+            self.map.updateAgentMovement(y_m, x_m- 1)
 
     def resetGame(self):
         self.resetPortal()

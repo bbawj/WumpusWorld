@@ -8,3 +8,4 @@ w = WorldMap.WorldMap()
 d = Driver.Driver(agent=a, world=w)
 p = Player.Player(driver=d)
 p.play()
+
