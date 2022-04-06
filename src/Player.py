@@ -41,9 +41,10 @@ class Player:
 
     def play(self):
         self.driver.printWorld()
-        cmd = src.main.input()
+        cmd = input()
         while cmd != "end":
             self.parseCmd(cmd)
             self.driver.printWorld()
+            self.driver.agent.printMap()
             print(self.driver.agent.relative_loc)
             cmd = input()
