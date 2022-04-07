@@ -72,3 +72,13 @@ class Agent:
 
     def printMap(self):
         self.map.printMap(direction=self.direction)
+
+    def getPercepts(self, cell):
+        if cell.coin:
+            self.pickup()
+            cell.coin = False
+        if cell.bump:
+            self.map.buildWall(self.direction)
+        self.map.getPercepts(cell)
+
+

@@ -31,6 +31,7 @@ class Driver:
             self.updateAgentLocation(y0, x0, y2, x2)
             self.agent.resetPortal()
             self.passPercepts(self.world.map[y2][x2])
+            self.updateCellSafety(y2, x2)
 
         # If agent steps into Wumpus cell
         elif self.world.map[y1][x1].wumpus:
@@ -40,6 +41,7 @@ class Driver:
         elif self.world.map[y1][x1].wall:
             print("You bumped into a wall!")
             self.world.map[y0][x0].bump = True
+            self.passPercepts(self.world.map[y0][x0])
 
         # If agent steps into empty cell
         elif self.world.map[y1][x1].empty:
@@ -191,5 +193,16 @@ class Driver:
         self.world.map[y][x].visited = True
 
     def passPercepts(self, cell):
-        self.agent.map.getPercepts(cell)
+        self.agent.getPercepts(cell)
+
+    def clearTransitions(self):
+        for row in self.world.map:
+            for cell in row:
+                cell.bump = False
+                cell.scream = False
+
+        for row in self.agent.map.map:
+            for cell in row:
+                cell.bump = False
+                cell.scream = False
 

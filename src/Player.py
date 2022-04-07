@@ -41,10 +41,13 @@ class Player:
 
     def play(self):
         self.driver.printWorld()
+        self.driver.agent.printMap()
         cmd = input()
         while cmd != "end":
+            self.driver.clearTransitions()
             self.parseCmd(cmd)
             self.driver.printWorld()
             self.driver.agent.printMap()
             print(self.driver.agent.relative_loc)
+            print("Coins: ", self.driver.agent.coin)
             cmd = input()

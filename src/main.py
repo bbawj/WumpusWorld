@@ -5,7 +5,7 @@ import Player
 import Cell
 
 a = Agent.Agent()
-w = WorldMap.WorldMap()
+w = WorldMap.WorldMap(num_coins=3)
 d = Driver.Driver(agent=a, world=w)
 p = Player.Player(driver=d)
 p.play()

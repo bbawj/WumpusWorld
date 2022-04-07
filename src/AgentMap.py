@@ -6,11 +6,11 @@ class AgentMap:
     def __init__(self):
         self.columns = 3
         self.rows = 3
-        self.map = [[Cell.Cell() for _ in range(3)] for _ in range(3)]
         self.map_loc = (1, 1)
         self.initMap()
 
     def initMap(self):
+        self.map = [[Cell.Cell() for _ in range(self.columns)] for _ in range(self.rows)]
         self.map[1][1].agent = True
 
     def printMap(self, direction):
@@ -95,3 +95,15 @@ class AgentMap:
     def getPercepts(self,cell):
         y,x = self.map_loc
         self.map[y][x].copyCell(cell)
+
+    def buildWall(self, direction):
+        y,x = self.map_loc
+        if direction == 0:
+            self.map[y-1][x].wall = True
+        elif direction == 1:
+            self.map[y][x+1].wall = True
+        elif direction == 2:
+            self.map[y+1][x].wall = True
+        elif direction == 3:
+            self.map[y][x-1].wall = True
+

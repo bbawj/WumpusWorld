@@ -112,6 +112,7 @@ class WorldMap:
 
     def assignCoin(self):
         for i in range(self.num_coins):
+            print("B")
             y, x = self.getEmptyPos()
             self.map[y][x].coin = True
             self.map[y][x].glitter = True
