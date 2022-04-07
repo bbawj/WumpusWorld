@@ -262,42 +262,42 @@ safe(r(X,Y)) :- \+wumpus(X,Y), \+confundus(X,Y).
 
 % true if the list L contains a sequence of actions that leads the Agent to inhabit a safe and
 % non-visited location.
-explore([],r(X,Y,D)) :- safe(X,Y), \+visited(X,Y).
-explore([H|T], r(X,Y,D)) :-
-  plan(H, r(X,Y,D), r(X1,Y1,D1)),
-  explore(T, r(X1,Y1,D1)).
-  
-  %% Dfs starting from a root
-dfs(Root) :-
-  dfs([Root], []).
+% explore with a variable will return a dfs path
+explore(L) :-
+  \+ is_list(L),
+  dfs(r(1,1),L).
+% explore with a list of nodes will return true if all nodes connected and leads to safe and unvisited node
+explore([H|T]) :-
+  safe(H),
+  getAdjacentRooms(H, L),
+  getFirstElement(T, N),
+  member(N, L),
+  length(T,1) -> (getFirstElement(T, N), safe(N), \+visited(N)); explore(T), !. 
+
+% Helper functions to get first Node from list
+getFirstElement([], N).
+getFirstElement([H|_], N) :- N = H.
+
+%% Dfs starting from a root
+dfs(Root, Path) :-
+  dfs([Root], [], Path).
 %% dfs(ToVisit, Visited)
 %% Done, all visited
-dfs([],_).
+dfs([],_, _).
 %found a safe unvisited node
-dfs([H|T], Visited) :-
-  \+member(H, Visited), safe(H), \+visited(H), write([H|Visited]).
+dfs([H|_], Visited, Path) :-
+  \+member(H, Visited), safe(H), \+visited(H), append(Visited,[H], UpdatedVisitedList), Path = UpdatedVisitedList.
 %% Skip elements that are already visited
-dfs([H|T],Visited) :-
+dfs([H|T],Visited, Path) :-
   member(H,Visited),
-  dfs(T,Visited).
+  dfs(T,Visited, Path).
 %% Add all neigbors of the head to the toVisit
-dfs([H|T],Visited) :-
+dfs([H|T],Visited, Path) :-
   not(member(H,Visited)),
   getAdjacentRooms(H, L),
   append(L,T, ToVisit),
-  dfs(ToVisit,[H|Visited]).
-
-plan(A, r(X, Y, D), r(X1,Y1,D1)) :-
-  (A = moveforward -> getForwardRoomAndDirection(r(X,Y), D, r(X1,Y1,D1));
-  A = turnleft -> getTurnLeftDirection(r(X,Y,D), r(X1,Y1,D1))),
-  safe(X1,Y1),
-  \+visited(X1,Y1).
-  
-getTurnLeftDirection(r(X,Y,D), r(X,Y,ND)):-
-  (D = east, ND = north, !;
-   D = north, ND = west, !;
-   D = west, ND = south, !;
-   D = south, ND = east, !).
+  append(Visited, [H], UpdatedVisitedList),
+  dfs(ToVisit,UpdatedVisitedList, Path).
 
 %Returns list of all adjacent rooms
 getAdjacentRooms(r(X,Y),L) :-
