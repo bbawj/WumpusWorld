@@ -1,6 +1,7 @@
 import random
 import AgentMap
 
+
 class Agent:
     def __init__(self):
         directions = [0, 1, 2, 3]
@@ -24,7 +25,7 @@ class Agent:
 
     def updateRelativeLocation(self):
         y0, x0 = self.relative_loc
-        y_m, x_m = self.map.agent_loc
+        y_m, x_m = self.map.map_loc
         current_dir = self.direction
         if current_dir == 0:
             self.relative_loc = (y0 - 1, x0)
@@ -37,7 +38,7 @@ class Agent:
             self.map.updateAgentMovement(y_m + 1, x_m)
         elif current_dir == 3:
             self.relative_loc = (y0, x0 - 1)
-            self.map.updateAgentMovement(y_m, x_m- 1)
+            self.map.updateAgentMovement(y_m, x_m - 1)
 
     def resetGame(self):
         self.resetPortal()
@@ -47,6 +48,7 @@ class Agent:
     def resetPortal(self):
         self.resetLocation()
         self.resetDirection()
+        self.map = AgentMap.AgentMap()
 
     def resetLocation(self):
         self.relative_loc = (0, 0)

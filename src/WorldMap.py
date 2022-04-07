@@ -180,3 +180,5 @@ class WorldMap:
     def updateCells(self, direction):
         y, x = self.agent_loc
         self.map[y][x].direction = direction
+
+

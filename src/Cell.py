@@ -1,5 +1,5 @@
 class Cell:
-    def __init__(self, blank=False):
+    def __init__(self):
         self.confounded = False
         self.stench = False
         self.tingle = False
@@ -14,7 +14,6 @@ class Cell:
         self.scream = False
         self.empty = True
         self.wall = False
-        self.blank = blank
 
     def printRow1(self):
         self.printCell1()
@@ -33,9 +32,7 @@ class Cell:
 
     # Confounded Indicator
     def printCell1(self):
-        if self.blank:
-            print(" ", end=" ")
-        elif self.wall:
+        if self.wall:
             print("w", end=" ")
         elif self.confounded:
             print("%", end=" ")
@@ -44,9 +41,7 @@ class Cell:
 
     # Stench Indicator
     def printCell2(self):
-        if self.blank:
-            print(" ", end=" ")
-        elif self.wall:
+        if self.wall:
             print("w", end=" ")
         elif self.stench:
             print("=", end=" ")
@@ -55,9 +50,7 @@ class Cell:
 
     # Tingle Indicator
     def printCell3(self):
-        if self.blank:
-            print(" ", end=" ")
-        elif self.wall:
+        if self.wall:
             print("w", end=" ")
         elif self.tingle:
             print("T", end=" ")
@@ -66,9 +59,7 @@ class Cell:
 
     # Agent Indicator
     def printCell4_6(self):
-        if self.blank:
-            print(" ", end=" ")
-        elif self.wall:
+        if self.wall:
             print("w", end=" ")
         elif self.agent:
             print("-", end=" ")
@@ -77,9 +68,7 @@ class Cell:
 
     # Wumpus/Portal/Direction/Safety Indicator
     def printCell5(self):
-        if self.blank:
-            print(" ", end=" ")
-        elif self.wall:
+        if self.wall:
             print("w", end=" ")
         elif self.wumpus:
             print("W", end=" ")
@@ -97,9 +86,7 @@ class Cell:
 
     # Glitter Indicator
     def printCell7(self):
-        if self.blank:
-            print(" ", end=" ")
-        elif self.wall:
+        if self.wall:
             print("w", end=" ")
         elif self.coin:
             print("*", end=" ")
@@ -108,9 +95,7 @@ class Cell:
 
     # Bump Indicator
     def printCell8(self):
-        if self.blank:
-            print(" ", end=" ")
-        elif self.wall:
+        if self.wall:
             print("w", end=" ")
         elif self.bump:
             print("B", end=" ")
@@ -119,9 +104,7 @@ class Cell:
 
     # Bump Indicator
     def printCell9(self):
-        if self.blank:
-            print(" ", end=" ")
-        elif self.wall:
+        if self.wall:
             print("w", end=" ")
         elif self.scream:
             print("@", end=" ")
@@ -131,3 +114,13 @@ class Cell:
     def printDirection(self):
         direction_mapping = {0: "∧", 1: ">", 2: "∨", 3: "<"}
         print(direction_mapping[self.direction], end=" ")
+
+    def copyCell(self, cell):
+        self.stench = cell.stench
+        self.tingle = cell.tingle
+        self.visited = cell.visited
+        self.safe = cell.safe
+        self.coin = cell.coin
+        self.bump = cell.bump
+        self.scream = cell.scream
+        self.empty = cell.empty
