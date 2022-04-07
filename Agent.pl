@@ -258,6 +258,8 @@ checkConfudusCertainty(RP,[H|T]) :-
 safe(X,Y) :- 
   \+wumpus(X,Y), \+confundus(X,Y).
 
+safe(r(X,Y)) :- \+wumpus(X,Y), \+confundus(X,Y).
+
 % true if the list L contains a sequence of actions that leads the Agent to inhabit a safe and
 % non-visited location.
 explore([],r(X,Y,D)) :- safe(X,Y), \+visited(X,Y).
@@ -265,6 +267,25 @@ explore([H|T], r(X,Y,D)) :-
   plan(H, r(X,Y,D), r(X1,Y1,D1)),
   explore(T, r(X1,Y1,D1)).
   
+  %% Dfs starting from a root
+dfs(Root) :-
+  dfs([Root], []).
+%% dfs(ToVisit, Visited)
+%% Done, all visited
+dfs([],_).
+%found a safe unvisited node
+dfs([H|T], Visited) :-
+  \+member(H, Visited), safe(H), \+visited(H), write([H|Visited]).
+%% Skip elements that are already visited
+dfs([H|T],Visited) :-
+  member(H,Visited),
+  dfs(T,Visited).
+%% Add all neigbors of the head to the toVisit
+dfs([H|T],Visited) :-
+  not(member(H,Visited)),
+  getAdjacentRooms(H, L),
+  append(L,T, ToVisit),
+  dfs(ToVisit,[H|Visited]).
 
 plan(A, r(X, Y, D), r(X1,Y1,D1)) :-
   (A = moveforward -> getForwardRoomAndDirection(r(X,Y), D, r(X1,Y1,D1));
