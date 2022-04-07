@@ -15,6 +15,8 @@ class Driver:
         self.world.map[y][x].direction = self.agent.direction
         self.world.map[y][x].empty = False
         self.world.agent_loc = (y, x)
+        self.updateCellSafety(y, x)
+        self.passPercepts(self.world.map[y][x])
 
     ########################################## MOVING FUNCTIONS ###############################################################
 
@@ -28,16 +30,23 @@ class Driver:
             y2, x2 = self.executePortal()
             self.updateAgentLocation(y0, x0, y2, x2)
             self.agent.resetPortal()
+            self.passPercepts(self.world.map[y2][x2])
 
         # If agent steps into Wumpus cell
         elif self.world.map[y1][x1].wumpus:
             print("You got eaten by ze Wumpus!")
             self.restartGame()
 
+        elif self.world.map[y1][x1].wall:
+            print("You bumped into a wall!")
+            self.world.map[y0][x0].bump = True
+
         # If agent steps into empty cell
         elif self.world.map[y1][x1].empty:
             self.updateAgentLocation(y0, x0, y1, x1)
             self.agent.updateRelativeLocation()
+            self.updateCellSafety(y1, x1)
+            self.passPercepts(self.world.map[y1][x1])
 
     def faceAgentNorth(self):
         while self.agent.direction != 0:
@@ -127,6 +136,8 @@ class Driver:
             cell.empty = True
             self.world.assignStench(y, x, False)
             print("You killed the Wumpus! Stonks")
+            y_a, x_a = self.world.agent_loc
+            self.world.map[y_a][x_a].scream = True
             return False
         elif not cell.empty:
             return False
@@ -174,3 +185,11 @@ class Driver:
             return y + 1, x
         elif current_dir == 3:
             return y, x - 1
+
+    def updateCellSafety(self, y, x):
+        self.world.map[y][x].safe = True
+        self.world.map[y][x].visited = True
+
+    def passPercepts(self, cell):
+        self.agent.map.getPercepts(cell)
+
