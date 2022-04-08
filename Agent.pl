@@ -3,7 +3,7 @@
 :- abolish(stench/1).
 :- abolish(tingle/1).
 :- abolish(actual_confundus/2).
-:- abolish(gold/2).
+:- abolish(glitter/2).
 :- abolish(has_gold/1).
 :- abolish(shooted/2).
 :- abolish(visited/1).
@@ -17,7 +17,7 @@
   stench/1,
   tingle/1,
   actual_confundus/2,
-  gold/2,
+  glitter/2,
   has_gold/1,
   shooted/2,
   visited/1,
@@ -33,26 +33,21 @@ actual_wumpus(1,3).
 actual_confundus(2,1).
 
 % Initial player position
-current(r(1, 1), north).
-visited(r(1, 1)).
+current(r(0, 0), rnorth).
+visited(r(0, 0)).
 
 reborn :- 
   retractall(current(_,_)),
   retractall(stench(_)),
   retractall(visited(_)),
   retractall(wall(_)),
-  assertz(current(r(1,1), north)).
+  assertz(current(r(0,0), rnorth)).
 
-is_confounded(no).
-
-reposition(L) :- 
+reposition :- 
   retractall(current(_,_)),
   retractall(stench(_)),
   retractall(visited(_)),
   retractall(wall(_)),
-  retractall(is_confounded(_)),
-  asserta(is_confounded(yes)),
-  perceptions(L),
   retractall(is_confounded(_)).
 
 % ---------------------------- %
@@ -70,49 +65,38 @@ has_arrows(yes).
 
 % Perceptions
 % ===========
-% If has gold it has glitter.
-glitter(X,Y) :- has_gold(G), G == no, current(r(X, Y), _), gold(X, Y).
-has_glitter(yes) :- current(r(X,Y), _), glitter(X,Y), !.
-has_glitter(no).
+% Process glitter percept into KB
+has_glitter(yes, r(X,Y)) :- assertz(glitter(X,Y)), !.
+has_glitter(no, Node).
 
-% Senses tingle if adjacent block has a confundus.
-has_tingle(yes) :-
-  current(r(X,Y), _),
-  ((N is Y + 1, actual_confundus(X, N));
-  (S is Y - 1, actual_confundus(X, S));
-  (E is X + 1, actual_confundus(E, Y));
-  (W is X - 1, actual_confundus(W, Y))),
-  add_tingle_kb(X,Y).
+% Process tingle percept into KB
+has_tingle(yes, Node) :-
+  add_tingle_kb(Node).
 has_tingle(no).
 
-add_tingle_kb(X,Y):-
+add_tingle_kb(r(X,Y)):-
   \+ tingle(r(X,Y)) -> assertz(tingle(r(X,Y))) ; true.
 
-% Senses stench if adjacent block has the wumpus.
-has_stench(yes) :-
-  current(r(X,Y), _),
-  ((N is Y + 1, actual_wumpus(X, N));
-  (S is Y - 1, actual_wumpus(X, S));
-  (E is X + 1, actual_wumpus(E, Y));
-  (W is X - 1, actual_wumpus(W, Y))),
-  add_stench_kb(X,Y).
+% Process confounded percept into reposition?
+is_confounded(yes, Node) :-
+  reposition.
+is_confounded(no, Node).
+  
+% Process stench percept into KB
+has_stench(yes, Node) :-
+  add_stench_kb(Node).
 has_stench(no).
 
-add_stench_kb(X,Y):-
+add_stench_kb(r(X,Y)):-
   \+ stench(r(X,Y)) -> assertz(stench(r(X,Y))) ; true.
 
-% Senses bump if is facing a wall
-has_bump(yes) :-
-  world(W,H),
-  (current(r(W-1, _), east);
-  current(r(_, H-1), north);
-  current(r(1, _), west);
-  current(r(_, 1), south)).
-has_bump(no).
+% Add wall to KB if perceive bump
+has_bump(yes, Node) :-
+  add_wall_kb(Node).
+has_bump(no, Node).
 
-add_wall_kb(X,Y,D):-
-  getForwardRoom(r(X,Y),D,N),
-  \+ wall(N) -> assertz(wall(N)) ; true.
+add_wall_kb(r(X,Y)):-
+  \+ wall(N) -> assertz(wall(r(X,Y))) ; true.
 
 is_bump(no).
 
@@ -129,63 +113,56 @@ has_scream(no).
 is_wumpus(dead) :- shooted(X, Y), actual_wumpus(X, Y), !.
 is_wumpus(alive).
 
-% Check if position is into map bounds.
-in_bounds(X, Y) :-
-  world(W, H),
-  X > 0, X =< W,
-  Y > 0, Y =< H.
-
 % Returns the current percetions
-perceptions([Confounded, Stench, Tingle, Glitter, Bump, Scream]) :-
-  is_confounded(Confounded), has_stench(Stench), has_tingle(Tingle), has_glitter(Glitter),
-  is_bump(Bump), has_scream(Scream), !.
+perceptions([Confounded, Stench, Tingle, Glitter, Bump, Scream], Node) :-
+  is_confounded(Confounded, Node), has_stench(Stench, Node), has_tingle(Tingle, Node), has_glitter(Glitter, Node),
+  has_bump(Bump, Node), has_scream(Scream), !.
 
 move(A, L) :-
   (
     A = shoot -> shoot ;
-    A = moveforward -> moveForward  ;
+    A = moveforward -> moveForward(L)  ;
     A = turnleft -> turnLeft ;
     A = turnright -> turnRight ;
-    A = pickup -> pickup
-  ),
-  perceptions(L).
+    A = pickup -> pickup(L)
+  ).
 
 % Moves the Player to a new position.
-moveForward :-
-  has_bump(yes), retractall(is_bump(_)), asserta(is_bump(yes)), current(r(X,Y),D), add_wall_kb(X,Y,D).
-moveForward :-
-  retractall(is_bump(_)),
-  asserta(is_bump(no)),
+moveForward(L) :-
   current(r(X,Y),D),
   getForwardRoom(r(X,Y),D, N),
-  retractall(current(_,_)),
+  perceptions(L, N),
+  is_confounded(N) -> true;
+  wall(N) -> true;
+  (retractall(current(_,_)),
   assertz(visited(N)),
   asserta(current(N,D)),
-  write("I am at: "), write(N), write(D).
+  write("I am at: "), write(N), write(D)).
 
 turnLeft :- 
   current(r(X,Y),D),
-  (D = east, ND = north, !;
-   D = north, ND = west, !;
-   D = west, ND = south, !;
-   D = south, ND = east, !),
+  (D = reast, ND = rnorth, !;
+   D = rnorth, ND = rwest, !;
+   D = rwest, ND = rsouth, !;
+   D = rsouth, ND = reast, !),
   retractall(current(_,_)),
   asserta(current(r(X,Y),ND)).
 
 turnRight :- 
   current(r(X,Y),D),
   (
-    (D = east, ND = south);
-    (D = south, ND = west);
-    (D = west, ND = north);
-    (D = north, ND = east)),
+    (D = reast, ND = rsouth);
+    (D = rsouth, ND = rwest);
+    (D = rwest, ND = rnorth);
+    (D = rnorth, ND = reast)),
   retractall(current(_,_)),
   asserta(current(r(X,Y),ND)).
 
-pickup :- 
-  \+ has_gold(yes),
+pickup(L) :-
   current(r(X,Y), _),
-  gold(X,Y),
+  perceptions(L, r(X,Y)) ,
+  glitter(X,Y),
+  \+ has_gold(yes),
   retractall(has_gold(_)),
   assertz(has_gold(yes)),
   write("Got the gold!").
@@ -316,16 +293,16 @@ isAdjacent(r(X,Y),r(XT,YT)) :-
 
 %Returns room in front of another in a certain direction
 getForwardRoom(r(X0,Y0),D0,r(XN,YN)) :-
-  (D0 = north, XN is X0, YN is Y0+1), !;
-  (D0 = east, XN is X0+1, YN is Y0), !;
-  (D0 = south, XN is X0, YN is Y0-1), !;
-  (D0 = west, XN is X0-1, YN is Y0), !.
+  (D0 = rnorth, XN is X0, YN is Y0+1), !;
+  (D0 = reast, XN is X0+1, YN is Y0), !;
+  (D0 = rsouth, XN is X0, YN is Y0-1), !;
+  (D0 = rwest, XN is X0-1, YN is Y0), !.
 
 getForwardRoomAndDirection(r(X0,Y0),D0,r(XN,YN, D0)) :-
-  (D0 = north, XN is X0, YN is Y0+1), !;
-  (D0 = east, XN is X0+1, YN is Y0), !;
-  (D0 = south, XN is X0, YN is Y0-1), !;
-  (D0 = west, XN is X0-1, YN is Y0), !.
+  (D0 = rnorth, XN is X0, YN is Y0+1), !;
+  (D0 = reast, XN is X0+1, YN is Y0), !;
+  (D0 = rsouth, XN is X0, YN is Y0-1), !;
+  (D0 = rwest, XN is X0-1, YN is Y0), !.
 
 trimNotVisited([],[]). %Removes rooms that weren't visited from list of rooms
 trimNotVisited([H|T],LT) :- trimNotVisited(T,L), (visited(H) -> append([H],L,LT); LT = L).
