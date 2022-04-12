@@ -43,6 +43,7 @@ reborn :-
   retractall(stench(_)),
   retractall(visited(_)),
   retractall(wall(_)),
+  retractall(glitter(_, _)),
   assertz(current(r(0,0), rnorth)).
 
 reposition :- 
@@ -50,7 +51,9 @@ reposition :-
   retractall(stench(_)),
   retractall(visited(_)),
   retractall(wall(_)),
-  retractall(is_confounded(_)).
+  retractall(glitter(_, _)),
+  assertz(current(r(0,0), rnorth)).
+  asserta(is_confounded(yes)).
 
 % ---------------------------- %
 % Environment predicates       %
@@ -81,9 +84,9 @@ add_tingle_kb(r(X,Y)):-
   \+ tingle(r(X,Y)) -> assertz(tingle(r(X,Y))) ; true.
 
 % Process confounded percept into reposition?
-is_confounded(yes) :-
+has_confounded(yes) :-
   reposition.
-is_confounded(no).
+has_confounded(no).
   
 % Process stench percept into KB
 has_stench(yes, Node) :-
@@ -118,7 +121,7 @@ has_scream(no).
 
 % Returns the current percetions
 perceptions([Confounded, Stench, Tingle, Glitter, Bump, Scream], Node) :-
-  is_confounded(Confounded), has_stench(Stench, Node), has_tingle(Tingle, Node), has_glitter(Glitter, Node),
+  has_confounded(Confounded), has_stench(Stench, Node), has_tingle(Tingle, Node), has_glitter(Glitter, Node),
   has_bump(Bump, Node), has_scream(Scream), !.
 
 move(A, L) :-
@@ -135,7 +138,7 @@ moveForward(L) :-
   current(r(X,Y),D),
   getForwardRoom(r(X,Y),D, N),
   perceptions(L, N),
-  is_confounded(N) -> true;
+  is_confounded(yes) -> (retractall(is_confounded(_)), true);
   wall(N) -> true;
   (retractall(current(_,_)),
   assertz(visited(N)),
@@ -246,7 +249,7 @@ safe(r(X,Y)) :- \+wumpus(X,Y), \+confundus(X,Y).
 % explore with a variable will return a dfs path
 explore(L) :-
   \+ is_list(L),
-  dfs(r(1,1),L).
+  dfs(r(0,0),L).
 % explore with a list of nodes will return true if all nodes connected and leads to safe and unvisited node
 explore([H|T]) :-
   safe(H),
