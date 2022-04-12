@@ -52,7 +52,7 @@ reposition :-
   retractall(visited(_)),
   retractall(wall(_)),
   retractall(glitter(_, _)),
-  assertz(current(r(0,0), rnorth)).
+  assertz(current(r(0,0), rnorth)),
   asserta(is_confounded(yes)).
 
 % ---------------------------- %
@@ -102,9 +102,8 @@ has_bump(yes, Node) :-
 has_bump(no, _).
 
 add_wall_kb(r(X,Y)):-
-  \+ wall(N) -> assertz(wall(r(X,Y))) ; true.
+  \+ wall(r(X,Y)) -> assertz(wall(r(X,Y))) ; true.
 
-is_bump(no).
 
 % Senses screm if wumpus have died
 has_scream(yes) :- assertz(dead_wumpus(yes)), !.
@@ -126,7 +125,7 @@ perceptions([Confounded, Stench, Tingle, Glitter, Bump, Scream], Node) :-
 
 move(A, L) :-
   (
-    A = shoot -> shoot ;
+    % A = shoot -> shoot ;
     A = moveforward -> moveForward(L)  ;
     A = turnleft -> turnLeft ;
     A = turnright -> turnRight ;
@@ -138,12 +137,12 @@ moveForward(L) :-
   current(r(X,Y),D),
   getForwardRoom(r(X,Y),D, N),
   perceptions(L, N),
-  is_confounded(yes) -> (retractall(is_confounded(_)), true);
-  wall(N) -> true;
-  (retractall(current(_,_)),
-  assertz(visited(N)),
-  asserta(current(N,D)),
-  write("I am at: "), write(N), write(D)).
+  (is_confounded(yes) -> retractall(is_confounded(_));
+  \+wall(N) -> (
+    retractall(current(_,_)),
+    assertz(visited(N)),
+    assertz(current(N,D)),
+    write("I am at: "), write(N), write(D)) ; false).
 
 turnLeft :- 
   current(r(X,Y),D),
