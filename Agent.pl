@@ -238,10 +238,12 @@ checkConfudusCertainty(RP,[H|T]) :-
 
 % where X,Y are integers, returns true if the Agent knows or can reason that the relative
 % position (X,Y) contains neither a Wumpus nor a Confundus Portal.
-safe(X,Y) :- 
-  \+wumpus(X,Y), \+confundus(X,Y).
+safe(X,Y) :- safe(r(X,Y)).
 
-safe(r(X,Y)) :- \+wumpus(X,Y), \+confundus(X,Y).
+safe(r(X,Y)) :- 
+  visited(r(X,Y)) -> true ;
+  (getAdjacentRooms(r(X,Y), L), trimNotVisited(L, LT), (\+maplist(stench, LT) , \+maplist(tingle, LT))
+  ).
 
 % true if the list L contains a sequence of actions that leads the Agent to inhabit a safe and
 % non-visited location.
