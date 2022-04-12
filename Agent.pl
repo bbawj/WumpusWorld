@@ -1,8 +1,9 @@
 :- abolish(current/2).
-:- abolish(actual_wumpus/2).
+% :- abolish(actual_wumpus/2).
+% :- abolish(actual_confundus/2).
+:- abolish(dead_wumpus/1).
 :- abolish(stench/1).
 :- abolish(tingle/1).
-:- abolish(actual_confundus/2).
 :- abolish(glitter/2).
 :- abolish(has_gold/1).
 :- abolish(shooted/2).
@@ -13,10 +14,11 @@
 
 :- dynamic([
   current/2,
-  actual_wumpus/2,
+  % actual_wumpus/2,
+  % actual_confundus/2,
+  dead_wumpus/1,
   stench/1,
   tingle/1,
-  actual_confundus/2,
   glitter/2,
   has_gold/1,
   shooted/2,
@@ -29,8 +31,8 @@
 % Defines the world NxM matrix.
 world(7, 6).
 gold(2,3).
-actual_wumpus(1,3).
-actual_confundus(2,1).
+% actual_wumpus(1,3).
+% actual_confundus(2,1).
 
 % Initial player position
 current(r(0, 0), rnorth).
@@ -55,6 +57,7 @@ reposition :-
 % ---------------------------- %
 visited(X,Y) :- visited(r(X,Y)).
 current(X,Y,D) :- current(r(X,Y),D).
+wall(X,Y) :- wall(r(X,Y)).
 stench(X,Y) :- stench(r(X,Y)).
 tingle(X,Y) :- tingle(r(X,Y)).
 
@@ -67,25 +70,25 @@ has_arrows(yes).
 % ===========
 % Process glitter percept into KB
 has_glitter(yes, r(X,Y)) :- assertz(glitter(X,Y)), !.
-has_glitter(no, Node).
+has_glitter(no, _).
 
 % Process tingle percept into KB
 has_tingle(yes, Node) :-
   add_tingle_kb(Node).
-has_tingle(no).
+has_tingle(no, _).
 
 add_tingle_kb(r(X,Y)):-
   \+ tingle(r(X,Y)) -> assertz(tingle(r(X,Y))) ; true.
 
 % Process confounded percept into reposition?
-is_confounded(yes, Node) :-
+is_confounded(yes) :-
   reposition.
-is_confounded(no, Node).
+is_confounded(no).
   
 % Process stench percept into KB
 has_stench(yes, Node) :-
   add_stench_kb(Node).
-has_stench(no).
+has_stench(no, _).
 
 add_stench_kb(r(X,Y)):-
   \+ stench(r(X,Y)) -> assertz(stench(r(X,Y))) ; true.
@@ -93,7 +96,7 @@ add_stench_kb(r(X,Y)):-
 % Add wall to KB if perceive bump
 has_bump(yes, Node) :-
   add_wall_kb(Node).
-has_bump(no, Node).
+has_bump(no, _).
 
 add_wall_kb(r(X,Y)):-
   \+ wall(N) -> assertz(wall(r(X,Y))) ; true.
@@ -101,7 +104,7 @@ add_wall_kb(r(X,Y)):-
 is_bump(no).
 
 % Senses screm if wumpus have died
-has_scream(yes) :- is_wumpus(dead), !.
+has_scream(yes) :- assertz(dead_wumpus(yes)), !.
 has_scream(no).
 
 % Check player's condition
@@ -110,12 +113,12 @@ has_scream(no).
 % is_player(alive).
 
 % Check Wumpus condition
-is_wumpus(dead) :- shooted(X, Y), actual_wumpus(X, Y), !.
-is_wumpus(alive).
+% is_wumpus(dead) :- shooted(X, Y), actual_wumpus(X, Y), !.
+% is_wumpus(alive).
 
 % Returns the current percetions
 perceptions([Confounded, Stench, Tingle, Glitter, Bump, Scream], Node) :-
-  is_confounded(Confounded, Node), has_stench(Stench, Node), has_tingle(Tingle, Node), has_glitter(Glitter, Node),
+  is_confounded(Confounded), has_stench(Stench, Node), has_tingle(Tingle, Node), has_glitter(Glitter, Node),
   has_bump(Bump, Node), has_scream(Scream), !.
 
 move(A, L) :-
@@ -182,6 +185,7 @@ pickup(L) :-
 % Evaluates possibility of Wumpus in a certain room. Checks if all
 % adjacent rooms that were visited had stench
 wumpus(X, Y) :-
+  \+dead_wumpus(yes),
   (certainWumpus(X,Y)  ;   
   (\+visited(r(X,Y)), getAdjacentRooms(r(X,Y),LA), trimNotVisited(LA,LT), (LT = []; checkStenchList(LT)))).
 checkStenchList([]).
