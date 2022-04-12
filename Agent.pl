@@ -211,9 +211,9 @@ certainWumpus(X, Y) :-
 % rooms that were visited had tingles
 confundus(X,Y) :- 
   certainConfundus(X,Y);
-  (\+visited(r(X,Y)), getAdjacentRooms(r(X,Y),LA), trimNotVisited(LA,LT), (LT = []; checkTingleList(LT))).
-checkTingleList([]).
-checkTingleList([H|T]) :- checkTingleList(T), tingle(H).
+  (\+visited(r(X,Y)), getAdjacentRooms(r(X,Y),LA), trimNotVisited(LA,LT), (checkTingleList(LT))).
+checkTingleList([]) :- false.
+checkTingleList([H|T]) :- checkTingleList(T) ; tingle(H).
 
 % One can only be certain of a confundus position if there is a room with
 % tingle where 3 adjacent rooms were visited and don't have a confundus. The
