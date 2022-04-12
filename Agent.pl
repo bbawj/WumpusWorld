@@ -190,9 +190,9 @@ pickup(L) :-
 wumpus(X, Y) :-
   \+dead_wumpus(yes),
   (certainWumpus(X,Y)  ;   
-  (\+visited(r(X,Y)), getAdjacentRooms(r(X,Y),LA), trimNotVisited(LA,LT), (LT = []; checkStenchList(LT)))).
-checkStenchList([]).
-checkStenchList([H|T]) :- checkStenchList(T), stench(H).
+  (\+visited(r(X,Y)), getAdjacentRooms(r(X,Y),LA), trimNotVisited(LA,LT), (checkStenchList(LT)))).
+checkStenchList([]) :- false.
+checkStenchList([H|T]) :- checkStenchList(T) ; stench(H).
 
 % More easily than checking for confunduss, as we know there is only one
 % Wumpus, one can mix and match adjacent rooms of two or more rooms with
