@@ -43,6 +43,7 @@ reborn :-
   retractall(stench(_)),
   retractall(visited(_)),
   retractall(wall(_)),
+  retractall(tingle(_)),
   retractall(glitter(_, _)),
   assertz(current(r(0,0), rnorth)).
 
@@ -51,6 +52,7 @@ reposition :-
   retractall(stench(_)),
   retractall(visited(_)),
   retractall(wall(_)),
+  retractall(tingle(_)),
   retractall(glitter(_, _)),
   assertz(current(r(0,0), rnorth)),
   asserta(is_confounded(yes)).
@@ -106,7 +108,7 @@ add_wall_kb(r(X,Y)):-
 
 
 % Senses screm if wumpus have died
-has_scream(yes) :- assertz(dead_wumpus(yes)), !.
+has_scream(yes) :- assertz(dead_wumpus(yes)), retractall(stench(_)), !.
 has_scream(no).
 
 % Check player's condition
