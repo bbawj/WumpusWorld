@@ -326,7 +326,7 @@ dfs(Root, Path) :-
 dfs([],_, _).
 %found a safe unvisited node
 dfs([H|_], Visited, Path) :-
-  \+member(H, Visited), safe(H), \+visited(H), append(Visited,[H], UpdatedVisitedList), Path = UpdatedVisitedList.
+  \+member(H, Visited), safe(H), \+visited(H), append(Visited,[H], UpdatedVisitedList), Path = UpdatedVisitedList, !.
 %% Skip elements that are already visited
 dfs([H|T],Visited, Path) :-
   member(H,Visited),
@@ -363,7 +363,7 @@ convertPathToMoves([r(X,Y)|T], CurrentDirection, Moves, FinalMoves) :-
     (1 is Y1-Y, CurrentDirection=reast) -> (append([turnleft, moveforward], Moves, UpdatedMoves), ND=rnorth) ;
     (1 is Y1-Y, CurrentDirection=rwest) -> (append([turnright, moveforward], Moves, UpdatedMoves), ND=rnorth)
   ),
-  convertPathToMoves(T, ND, UpdatedMoves, FinalMoves).
+  convertPathToMoves(T, ND, UpdatedMoves, FinalMoves), !.
 
 getRelativeAdjacentRooms(r(X,Y), D, L) :-
   XL is X-1,
