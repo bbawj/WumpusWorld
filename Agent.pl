@@ -39,6 +39,7 @@ reborn :-
   retractall(wall(_)),
   retractall(tingle(_)),
   retractall(glitter(_, _)),
+  assertz(visited(r(0,0))),
   assertz(current(r(0,0), rnorth)).
 
 reposition :- 
