@@ -62,7 +62,7 @@ tingle(X,Y) :- tingle(r(X,Y)).
 
 has_gold(no).
 
-hasarrow :- shot(yes).
+hasarrow :- \+shot(yes).
 
 % Perceptions
 % ===========
