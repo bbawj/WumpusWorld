@@ -51,6 +51,17 @@ reposition :-
   assertz(current(r(0,0), rnorth)),
   asserta(is_confounded(yes)).
 
+reposition(L) :- 
+  retractall(current(_,_)),
+  retractall(stench(_)),
+  retractall(visited(_)),
+  retractall(wall(_)),
+  retractall(tingle(_)),
+  retractall(glitter(_, _)),
+  assertz(current(r(0,0), rnorth)),
+  asserta(is_confounded(yes)),
+  perceptions(L, r(0,0)).
+
 % ---------------------------- %
 % Environment predicates       %
 % ---------------------------- %
