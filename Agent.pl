@@ -49,6 +49,7 @@ reposition :-
   retractall(tingle(_)),
   retractall(glitter(_, _)),
   assertz(current(r(0,0), rnorth)),
+  assertz(visited(r(0,0))),
   asserta(is_confounded(yes)).
 
 reposition(L) :- 
@@ -59,6 +60,7 @@ reposition(L) :-
   retractall(tingle(_)),
   retractall(glitter(_, _)),
   assertz(current(r(0,0), rnorth)),
+  assertz(visited(r(0,0))),
   asserta(is_confounded(yes)),
   perceptions(L, r(0,0)).
 
@@ -78,7 +80,7 @@ hasarrow :- \+shot(yes).
 % Perceptions
 % ===========
 % Process glitter percept into KB
-has_glitter(yes, r(X,Y)) :- assertz(glitter(X,Y)), !.
+has_glitter(yes, r(X,Y)) :- assertz(glitter(X,Y)), pickup, !.
 has_glitter(no, _).
 
 % Process tingle percept into KB
@@ -158,6 +160,12 @@ turnRight :-
     (D = rnorth, ND = reast)),
   retractall(current(_,_)),
   asserta(current(r(X,Y),ND)).
+
+pickup :-
+  has_gold(no),
+  retractall(has_gold(_)),
+  assertz(has_gold(yes)),
+  write("Got the gold!").
 
 pickup(L) :-
   current(r(X,Y), _),
