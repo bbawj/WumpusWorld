@@ -228,41 +228,105 @@ safe(r(X,Y)) :-
 % true if the list L contains a sequence of actions that leads the Agent to inhabit a safe and
 % non-visited location.
 % explore with a variable will return a dfs path
-explore(L) :-
-  \+ is_list(L),
-  dfs(r(0,0),L).
+explore(P, A) :-
+  \+ is_list(P),
+  current(r(X,Y), D),
+  dfs(r(X,Y), D, P, A), !.
 % explore with a list of nodes will return true if all nodes connected and leads to safe and unvisited node
-explore([H|T]) :-
-  safe(H),
-  getAdjacentRooms(H, L),
-  getFirstElement(T, N),
-  member(N, L),
-  length(T,1) -> (getFirstElement(T, N), safe(N), \+visited(N)); explore(T), !. 
+explore(L) :-
+  current(r(X,Y), D),
+  ensureActions(L, r(X,Y), D).
+
+ensureActions([H|T], CurrentRoom, D) :-
+  getRoomFromMove(CurrentRoom, D, H, N),
+  getDirectionFromMove(H, D, ND),
+  safe(N),
+  (length(T, 0) -> \+visited(N); ensureActions(T, N, ND)).
 
 % Helper functions to get first Node from list
 getFirstElement([], N).
 getFirstElement([H|_], N) :- N = H.
 
+getRoomFromMove(r(X,Y), D, A, N) :-
+  XL is X-1,
+  XR is X+1,
+  YD is Y-1,
+  YU is Y+1,
+  (
+    (A=[turnleft, moveforward], D=rnorth) -> N=r(XL,Y) ;
+    (A=[turnleft, moveforward], D=reast) -> N=r(X,YU) ;
+    (A=[turnleft, moveforward], D=rwest) -> N=r(X,YD) ;
+    (A=[turnleft, moveforward, D=rsouth]) -> N=r(XR,Y) ;
+    (A=[turnleft, turnleft, moveforward], D=rnorth) -> N=r(X,YD) ;
+    (A=[turnleft, turnleft, moveforward], D=reast) -> N=r(XL, Y) ;
+    (A=[turnleft, turnleft, moveforward], D=rwest) -> N=r(XR,Y) ;
+    (A=[turnleft, turnleft, moveforward], D=rsouth) -> N=r(X,YU) ;
+    (A=[turnright, moveforward], D=rnorth) -> N=r(XR,Y) ;
+    (A=[turnright, moveforward], D=reast) -> N=r(X,YD) ;
+    (A=[turnright, moveforward], D=rwest) -> N=r(X,YU) ;
+    (A=[turnright, moveforward], D=rsouth) -> N=r(XL,Y) ;
+    (A=[moveforward], D=rnorth) -> N=r(X,YU) ;
+    (A=[moveforward], D=reast) -> N=r(XR,Y) ;
+    (A=[moveforward], D=rwest) -> N=r(XL,Y) ;
+    (A=[moveforward], D=rsouth) -> N=r(X,YD) ;
+    N = r(X,Y)
+  ).
+  
+
 %% Dfs starting from a root
-dfs(Root, Path) :-
-  dfs([Root], [], Path).
+dfs(Root, Direction, Path, Actions) :-
+  dfs([Root], [], Path, [[]], [], Actions, Direction).
 %% dfs(ToVisit, Visited)
-%% Done, all visited
-dfs([],_, _).
+%% Done, all visitedd
+dfs([],_, _,[],_,_,_).
 %found a safe unvisited node
-dfs([H|_], Visited, Path) :-
-  \+member(H, Visited), safe(H), \+visited(H), append(Visited,[H], UpdatedVisitedList), Path = UpdatedVisitedList.
+dfs([H|_], Visited, Path, [A|_], FinalMoveSet, Actions, _) :-
+  \+member(H, Visited), safe(H), \+visited(H), append(Visited,[H], UpdatedVisitedList), Path = UpdatedVisitedList, append(FinalMoveSet,[A], UpdatedMoveSet), 
+  Actions = UpdatedMoveSet, !.
 %% Skip elements that are already visited
-dfs([H|T],Visited, Path) :-
+dfs([H|T],Visited, Path, [_|B], FinalMoveSet, Actions, Direction) :-
   member(H,Visited),
-  dfs(T,Visited, Path).
+  dfs(T,Visited, Path, B, FinalMoveSet, Actions, Direction).
 %% Add all neigbors of the head to the toVisit
-dfs([H|T],Visited, Path) :-
+dfs([H|T],Visited, Path, [A|B], FinalMoveSet, Actions, Direction) :-
   not(member(H,Visited)),
-  getAdjacentRooms(H, L),
+  getRelativeAdjacentRooms(H, Direction, L),
   append(L,T, ToVisit),
   append(Visited, [H], UpdatedVisitedList),
-  dfs(ToVisit,UpdatedVisitedList, Path).
+  append(FinalMoveSet, [A], UpdatedMoveSet),
+  getDirectionFromMove(A, Direction, ND),
+  append([[turnleft, moveforward], [turnright, moveforward],[turnleft, turnleft, moveforward], [moveforward]], B, MovesToVisit),
+  dfs(ToVisit,UpdatedVisitedList, Path, MovesToVisit, UpdatedMoveSet, Actions, ND).
+
+getRelativeAdjacentRooms(r(X,Y), D, L) :-
+  XL is X-1,
+  XR is X+1,
+  YD is Y-1,
+  YU is Y+1,
+  (
+    D = rnorth -> append([r(XL,Y), r(XR,Y), r(X,YU), r(X,YD)],[],L) ;
+    D = rsouth -> append([r(XR,Y), r(XL,Y), r(X,YD), r(X,YU)],[],L) ;
+    D = reast -> append([r(X,YD), r(X,YU), r(XL,Y), r(XR,Y)],[],L) ;
+    D = rwest -> append([r(X,YU), r(X,YD), r(XR,Y), r(XL,Y)],[],L)
+  ).
+
+getDirectionFromMove(A, D, ND) :-
+  (
+    (A=[turnleft, moveforward], D=rnorth) -> ND = rwest ;
+    (A=[turnleft, moveforward], D=reast) -> ND = rnorth ;
+    (A=[turnleft, moveforward], D=rwest) -> ND = rsouth ;
+    (A=[turnleft, moveforward], D=rsouth) -> ND = reast ;
+    (A=[turnleft, turnleft, moveforward], D=rnorth) -> ND = rsouth ;
+    (A=[turnleft, turnleft, moveforward], D=reast) -> ND = rwest ;
+    (A=[turnleft, turnleft, moveforward], D=rwest) -> ND = reast ;
+    (A=[turnleft, turnleft, moveforward], D=rsouth) -> ND = rnorth ;
+    (A=[turnright, moveforward], D=rnorth) -> ND = reast ;
+    (A=[turnright, moveforward], D=reast) -> ND = rsouth ;
+    (A=[turnright, moveforward], D=rwest) -> ND = rnorth ;
+    (A=[turnright, moveforward], D=rsouth) -> ND = rwest ;
+    ND = D
+  ).
+
 
 %Returns list of all adjacent rooms
 getAdjacentRooms(r(X,Y),L) :-
