@@ -305,8 +305,7 @@ dfs([H|_], Visited, Path, [A|_], FinalMoveSet, Actions, _) :-
   Actions = UpdatedMoveSet, !.
 %% Skip elements that are already visited
 dfs([H|T],Visited, Path, [_|B], FinalMoveSet, Actions, Direction) :-
-  member(H,Visited),
-  dfs(T,Visited, Path, B, FinalMoveSet, Actions, Direction).
+  (member(H,Visited) ; \+safe(H)) , dfs(T,Visited, Path, B, FinalMoveSet, Actions, Direction).
 %% Add all neigbors of the head to the toVisit
 dfs([H|T],Visited, Path, [A|B], FinalMoveSet, Actions, Direction) :-
   not(member(H,Visited)),
