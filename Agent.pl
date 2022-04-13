@@ -251,11 +251,12 @@ safe(r(X,Y)) :-
 explore(P, A) :-
   \+ is_list(P),
   current(r(X,Y), D),
-  dfs(r(X,Y), D, P, A), !.
+  dfs(r(X,Y), P),
+  convertPathToMoves(P, D, [], A).
 % explore with a list of nodes will return true if all nodes connected and leads to safe and unvisited node
-explore(L) :-
-  current(r(X,Y), D),
-  ensureActions(L, r(X,Y), D).
+% explore(L) :-
+%   current(r(X,Y), D),
+%   ensureActions(L, r(X,Y), D).
 
 ensureActions([H|T], CurrentRoom, D) :-
   getRoomFromMove(CurrentRoom, D, H, N),
@@ -293,29 +294,76 @@ getRoomFromMove(r(X,Y), D, A, N) :-
   ).
   
 
+% %% Dfs starting from a root
+% dfs(Root, Direction, Path, Actions) :-
+%   dfs([Root], [], Path, [[]], [], Actions, Direction).
+% %% dfs(ToVisit, Visited)
+% %% Done, all visitedd
+% dfs([],_, _,[],_,_,_).
+% %found a safe unvisited node
+% dfs([H|_], Visited, Path, [A|_], FinalMoveSet, Actions, _) :-
+%   \+member(H, Visited), safe(H), \+visited(H), append(Visited,[H], UpdatedVisitedList), Path = UpdatedVisitedList, append(FinalMoveSet,[A], UpdatedMoveSet), 
+%   Actions = UpdatedMoveSet, !.
+% %% Skip elements that are already visited
+% dfs([H|T],Visited, Path, [_|B], FinalMoveSet, Actions, Direction) :-
+%   (member(H,Visited) ; \+safe(H)) , dfs(T,Visited, Path, B, FinalMoveSet, Actions, Direction).
+% %% Add all neigbors of the head to the toVisit
+% dfs([H|T],Visited, Path, [A|B], FinalMoveSet, Actions, Direction) :-
+%   not(member(H,Visited)),
+%   getRelativeAdjacentRooms(H, Direction, L),
+%   append(L,T, ToVisit),
+%   append(Visited, [H], UpdatedVisitedList),
+%   append(FinalMoveSet, [A], UpdatedMoveSet),
+%   getDirectionFromMove(A, Direction, ND),
+%   append([[turnleft, moveforward], [turnright, moveforward], [moveforward], [turnleft, turnleft, moveforward]], B, MovesToVisit),
+%   dfs(ToVisit,UpdatedVisitedList, Path, MovesToVisit, UpdatedMoveSet, Actions, ND).
+
 %% Dfs starting from a root
-dfs(Root, Direction, Path, Actions) :-
-  dfs([Root], [], Path, [[]], [], Actions, Direction).
+dfs(Root, Path) :-
+  dfs([Root], [], Path).
 %% dfs(ToVisit, Visited)
-%% Done, all visitedd
-dfs([],_, _,[],_,_,_).
+%% Done, all visited
+dfs([],_, _).
 %found a safe unvisited node
-dfs([H|_], Visited, Path, [A|_], FinalMoveSet, Actions, _) :-
-  \+member(H, Visited), safe(H), \+visited(H), append(Visited,[H], UpdatedVisitedList), Path = UpdatedVisitedList, append(FinalMoveSet,[A], UpdatedMoveSet), 
-  Actions = UpdatedMoveSet, !.
+dfs([H|_], Visited, Path) :-
+  \+member(H, Visited), safe(H), \+visited(H), append(Visited,[H], UpdatedVisitedList), Path = UpdatedVisitedList.
 %% Skip elements that are already visited
-dfs([H|T],Visited, Path, [_|B], FinalMoveSet, Actions, Direction) :-
-  (member(H,Visited) ; \+safe(H)) , dfs(T,Visited, Path, B, FinalMoveSet, Actions, Direction).
+dfs([H|T],Visited, Path) :-
+  member(H,Visited),
+  dfs(T,Visited, Path).
 %% Add all neigbors of the head to the toVisit
-dfs([H|T],Visited, Path, [A|B], FinalMoveSet, Actions, Direction) :-
+dfs([H|T],Visited, Path) :-
   not(member(H,Visited)),
-  getRelativeAdjacentRooms(H, Direction, L),
+  getAdjacentRooms(H, L),
   append(L,T, ToVisit),
   append(Visited, [H], UpdatedVisitedList),
-  append(FinalMoveSet, [A], UpdatedMoveSet),
-  getDirectionFromMove(A, Direction, ND),
-  append([[turnleft, moveforward], [turnright, moveforward], [moveforward], [turnleft, turnleft, moveforward]], B, MovesToVisit),
-  dfs(ToVisit,UpdatedVisitedList, Path, MovesToVisit, UpdatedMoveSet, Actions, ND).
+  dfs(ToVisit,UpdatedVisitedList, Path).
+
+convertPathToMoves(L, _, UpdatedMoves, FinalMoves) :-
+  length(L, 1),
+  FinalMoves = UpdatedMoves, !.
+
+convertPathToMoves([r(X,Y)|T], CurrentDirection, Moves, FinalMoves) :-
+  getFirstElement(T, r(X1, Y1)),
+  (
+    (1 is X1-X, CurrentDirection=rnorth) -> (append([turnright, moveforward], Moves, UpdatedMoves), ND=reast) ;
+    (1 is X1-X, CurrentDirection=rsouth) -> (append([turnleft, moveforward], Moves, UpdatedMoves), ND=reast) ;
+    (1 is X1-X, CurrentDirection=reast) -> (append([moveforward], Moves, UpdatedMoves) , ND=reast);
+    (1 is X1-X, CurrentDirection=rwest) -> (append([turnleft, turnleft, moveforward], Moves, UpdatedMoves), ND=reast) ;
+    (1 is X-X1, CurrentDirection=rnorth) -> (append([turnleft, moveforward], Moves, UpdatedMoves), ND=rwest) ;
+    (1 is X-X1, CurrentDirection=rsouth) -> (append([turnright, moveforward], Moves, UpdatedMoves), ND=rwest) ;
+    (1 is X-X1, CurrentDirection=reast) -> (append([turnleft, turnleft, moveforward], Moves, UpdatedMoves), ND=rwest) ;
+    (1 is X-X1, CurrentDirection=rwest) -> (append([moveforward], Moves, UpdatedMoves), ND=rwest);
+    (1 is Y-Y1, CurrentDirection=rnorth) -> (append([turnleft, turnleft, moveforward], Moves, UpdatedMoves), ND=rsouth) ;
+    (1 is Y-Y1, CurrentDirection=rsouth) -> (append([moveforward], Moves, UpdatedMoves), ND=rsouth) ;
+    (1 is Y-Y1, CurrentDirection=reast) -> (append([turnright, moveforward], Moves, UpdatedMoves), ND=rsouth) ;
+    (1 is Y-Y1, CurrentDirection=rwest) -> (append([turnleft, moveforward], Moves, UpdatedMoves), ND=rsouth) ;
+    (1 is Y1-Y, CurrentDirection=rnorth) -> (append([moveforward], Moves, UpdatedMoves), ND=rnorth) ;
+    (1 is Y1-Y, CurrentDirection=rsouth) -> (append([turnleft, turnleft, moveforward], Moves, UpdatedMoves), ND=rnorth) ;
+    (1 is Y1-Y, CurrentDirection=reast) -> (append([turnleft, moveforward], Moves, UpdatedMoves), ND=rnorth) ;
+    (1 is Y1-Y, CurrentDirection=rwest) -> (append([turnright, moveforward], Moves, UpdatedMoves), ND=rnorth)
+  ),
+  convertPathToMoves(T, ND, UpdatedMoves, FinalMoves).
 
 getRelativeAdjacentRooms(r(X,Y), D, L) :-
   XL is X-1,
