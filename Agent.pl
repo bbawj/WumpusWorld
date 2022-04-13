@@ -229,7 +229,6 @@ checkConfudusCertainty(RP,[H|T]) :-
   (
       (
       getAdjacentRooms(H,LA),
-      trimVisited(LA,LT),
       trimWall(LT,LT2),
       LT2 = [RP]
       )
