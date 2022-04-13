@@ -346,22 +346,22 @@ convertPathToMoves(L, _, UpdatedMoves, FinalMoves) :-
 convertPathToMoves([r(X,Y)|T], CurrentDirection, Moves, FinalMoves) :-
   getFirstElement(T, r(X1, Y1)),
   (
-    (1 is X1-X, CurrentDirection=rnorth) -> (append([turnright, moveforward], Moves, UpdatedMoves), ND=reast) ;
-    (1 is X1-X, CurrentDirection=rsouth) -> (append([turnleft, moveforward], Moves, UpdatedMoves), ND=reast) ;
-    (1 is X1-X, CurrentDirection=reast) -> (append([moveforward], Moves, UpdatedMoves) , ND=reast);
-    (1 is X1-X, CurrentDirection=rwest) -> (append([turnleft, turnleft, moveforward], Moves, UpdatedMoves), ND=reast) ;
-    (1 is X-X1, CurrentDirection=rnorth) -> (append([turnleft, moveforward], Moves, UpdatedMoves), ND=rwest) ;
-    (1 is X-X1, CurrentDirection=rsouth) -> (append([turnright, moveforward], Moves, UpdatedMoves), ND=rwest) ;
-    (1 is X-X1, CurrentDirection=reast) -> (append([turnleft, turnleft, moveforward], Moves, UpdatedMoves), ND=rwest) ;
-    (1 is X-X1, CurrentDirection=rwest) -> (append([moveforward], Moves, UpdatedMoves), ND=rwest);
-    (1 is Y-Y1, CurrentDirection=rnorth) -> (append([turnleft, turnleft, moveforward], Moves, UpdatedMoves), ND=rsouth) ;
-    (1 is Y-Y1, CurrentDirection=rsouth) -> (append([moveforward], Moves, UpdatedMoves), ND=rsouth) ;
-    (1 is Y-Y1, CurrentDirection=reast) -> (append([turnright, moveforward], Moves, UpdatedMoves), ND=rsouth) ;
-    (1 is Y-Y1, CurrentDirection=rwest) -> (append([turnleft, moveforward], Moves, UpdatedMoves), ND=rsouth) ;
-    (1 is Y1-Y, CurrentDirection=rnorth) -> (append([moveforward], Moves, UpdatedMoves), ND=rnorth) ;
-    (1 is Y1-Y, CurrentDirection=rsouth) -> (append([turnleft, turnleft, moveforward], Moves, UpdatedMoves), ND=rnorth) ;
-    (1 is Y1-Y, CurrentDirection=reast) -> (append([turnleft, moveforward], Moves, UpdatedMoves), ND=rnorth) ;
-    (1 is Y1-Y, CurrentDirection=rwest) -> (append([turnright, moveforward], Moves, UpdatedMoves), ND=rnorth)
+    (1 is X1-X, CurrentDirection=rnorth) -> (append([[turnright, moveforward]], Moves, UpdatedMoves), ND=reast) ;
+    (1 is X1-X, CurrentDirection=rsouth) -> (append([[turnleft, moveforward]], Moves, UpdatedMoves), ND=reast) ;
+    (1 is X1-X, CurrentDirection=reast) -> (append([[moveforward]], Moves, UpdatedMoves) , ND=reast);
+    (1 is X1-X, CurrentDirection=rwest) -> (append([[turnleft, turnleft, moveforward]], Moves, UpdatedMoves), ND=reast) ;
+    (1 is X-X1, CurrentDirection=rnorth) -> (append([[turnleft, moveforward]], Moves, UpdatedMoves), ND=rwest) ;
+    (1 is X-X1, CurrentDirection=rsouth) -> (append([[turnright, moveforward]], Moves, UpdatedMoves), ND=rwest) ;
+    (1 is X-X1, CurrentDirection=reast) -> (append([[turnleft, turnleft, moveforward]], Moves, UpdatedMoves), ND=rwest) ;
+    (1 is X-X1, CurrentDirection=rwest) -> (append([[moveforward]], Moves, UpdatedMoves), ND=rwest);
+    (1 is Y-Y1, CurrentDirection=rnorth) -> (append([[turnleft, turnleft, moveforward]], Moves, UpdatedMoves), ND=rsouth) ;
+    (1 is Y-Y1, CurrentDirection=rsouth) -> (append([[moveforward]], Moves, UpdatedMoves), ND=rsouth) ;
+    (1 is Y-Y1, CurrentDirection=reast) -> (append([[turnright, moveforward]], Moves, UpdatedMoves), ND=rsouth) ;
+    (1 is Y-Y1, CurrentDirection=rwest) -> (append([[turnleft, moveforward]], Moves, UpdatedMoves), ND=rsouth) ;
+    (1 is Y1-Y, CurrentDirection=rnorth) -> (append([[moveforward]], Moves, UpdatedMoves), ND=rnorth) ;
+    (1 is Y1-Y, CurrentDirection=rsouth) -> (append([[turnleft, turnleft, moveforward]], Moves, UpdatedMoves), ND=rnorth) ;
+    (1 is Y1-Y, CurrentDirection=reast) -> (append([[turnleft, moveforward]], Moves, UpdatedMoves), ND=rnorth) ;
+    (1 is Y1-Y, CurrentDirection=rwest) -> (append([[turnright, moveforward]], Moves, UpdatedMoves), ND=rnorth)
   ),
   convertPathToMoves(T, ND, UpdatedMoves, FinalMoves), !.
 
