@@ -1,12 +1,10 @@
 :- abolish(current/2).
-% :- abolish(actual_wumpus/2).
-% :- abolish(actual_confundus/2).
 :- abolish(dead_wumpus/1).
 :- abolish(stench/1).
 :- abolish(tingle/1).
 :- abolish(glitter/2).
 :- abolish(has_gold/1).
-:- abolish(shooted/2).
+:- abolish(shot/1).
 :- abolish(visited/1).
 :- abolish(is_bump/1).
 :- abolish(wall/1).
@@ -14,14 +12,12 @@
 
 :- dynamic([
   current/2,
-  % actual_wumpus/2,
-  % actual_confundus/2,
   dead_wumpus/1,
   stench/1,
   tingle/1,
   glitter/2,
   has_gold/1,
-  shooted/2,
+  shot/1,
   visited/1,
   is_bump/1,
   wall/1,
@@ -31,8 +27,6 @@
 % Defines the world NxM matrix.
 world(7, 6).
 gold(2,3).
-% actual_wumpus(1,3).
-% actual_confundus(2,1).
 
 % Initial player position
 current(r(0, 0), rnorth).
@@ -68,8 +62,7 @@ tingle(X,Y) :- tingle(r(X,Y)).
 
 has_gold(no).
 
-has_arrows(no) :- shooted(_, _), !.
-has_arrows(yes).
+hasarrow :- shot(yes).
 
 % Perceptions
 % ===========
@@ -106,19 +99,9 @@ has_bump(no, _).
 add_wall_kb(r(X,Y)):-
   \+ wall(r(X,Y)) -> assertz(wall(r(X,Y))) ; true.
 
-
 % Senses screm if wumpus have died
 has_scream(yes) :- assertz(dead_wumpus(yes)), retractall(stench(_)), !.
 has_scream(no).
-
-% Check player's condition
-% is_player(dead) :- current(r(X, Y), _), actual_wumpus(X, Y), reborn, !.
-% is_player(confounded) :- current(r(X, Y), _), confundus(X, Y), !.
-% is_player(alive).
-
-% Check Wumpus condition
-% is_wumpus(dead) :- shooted(X, Y), actual_wumpus(X, Y), !.
-% is_wumpus(alive).
 
 % Returns the current percetions
 perceptions([Confounded, Stench, Tingle, Glitter, Bump, Scream], Node) :-
@@ -127,7 +110,7 @@ perceptions([Confounded, Stench, Tingle, Glitter, Bump, Scream], Node) :-
 
 move(A, L) :-
   (
-    % A = shoot -> shoot ;
+    A = shoot -> shoot(L) ;
     A = moveforward -> moveForward(L)  ;
     A = turnleft -> turnLeft ;
     A = turnright -> turnRight ;
@@ -175,16 +158,11 @@ pickup(L) :-
   write("Got the gold!").
 
 % Shoot at given position
-% shoot :- has_arrows(no), write('!: I do not have arrows anymore.'), !.
-% shoot :-
-%   (
-%     current(X,Y,D), D=east, X is X+1, !;  
-%     current(X,Y,D), D=west, X is X-1, !;  
-%     current(X,Y,D), D=north, Y is Y+1, !;  
-%     current(X,Y,D), D=south, Y is Y-1, ! 
-%   ),
-%   has_arrows(yes),
-%   assertz(shooted(X, Y)).
+shoot(_) :- \+hasarrow, write('I do not have arrows anymore.'), !.
+shoot(L) :-
+  hasarrow, assertz(shot(yes)),
+  current(r(X,Y),_),
+  perceptions(L, r(X,Y)).
 
 % Evaluates possibility of Wumpus in a certain room. Checks if all
 % adjacent rooms that were visited had stench
