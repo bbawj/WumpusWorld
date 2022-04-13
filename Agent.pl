@@ -229,6 +229,7 @@ checkConfudusCertainty(RP,[H|T]) :-
   (
       (
       getAdjacentRooms(H,LA),
+      trimVisited(LA,LT),
       trimWall(LT,LT2),
       LT2 = [RP]
       )
@@ -324,8 +325,8 @@ getRelativeAdjacentRooms(r(X,Y), D, L) :-
   (
     D = rnorth -> append([r(XL,Y), r(XR,Y), r(X,YU), r(X,YD)],[],L) ;
     D = rsouth -> append([r(XR,Y), r(XL,Y), r(X,YD), r(X,YU)],[],L) ;
-    D = reast -> append([r(X,YD), r(X,YU), r(XL,Y), r(XR,Y)],[],L) ;
-    D = rwest -> append([r(X,YU), r(X,YD), r(XR,Y), r(XL,Y)],[],L)
+    D = reast -> append([r(X,YU), r(X,YD), r(XR,Y), r(XL,Y)],[],L) ;
+    D = rwest -> append([r(X,YD), r(X,YU), r(XL,Y), r(XR,Y)],[],L)
   ).
 
 getDirectionFromMove(A, D, ND) :-
