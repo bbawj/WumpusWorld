@@ -315,7 +315,7 @@ dfs([H|T],Visited, Path, [A|B], FinalMoveSet, Actions, Direction) :-
   append(Visited, [H], UpdatedVisitedList),
   append(FinalMoveSet, [A], UpdatedMoveSet),
   getDirectionFromMove(A, Direction, ND),
-  append([[turnleft, moveforward], [turnright, moveforward],[turnleft, turnleft, moveforward], [moveforward]], B, MovesToVisit),
+  append([[turnleft, moveforward], [turnright, moveforward], [moveforward], [turnleft, turnleft, moveforward]], B, MovesToVisit),
   dfs(ToVisit,UpdatedVisitedList, Path, MovesToVisit, UpdatedMoveSet, Actions, ND).
 
 getRelativeAdjacentRooms(r(X,Y), D, L) :-
