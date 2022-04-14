@@ -195,7 +195,8 @@ certainWumpus(X, Y) :-
    getAdjacentRooms(H,LA), %get all adjacent rooms to stench squares
    trimVisited(LA,LAT), %get unvisited rooms adjacent to stench
    trimWall(LAT, LW),
-   length(LW, 1), %If only one room is reached, that is where the wumpus is
+   trimNotAdjacent(LW, T, LNA),
+   length(LNA, 1), %If only one room is reached, that is where the wumpus is
    LW = [r(X,Y)]
    ).
 
