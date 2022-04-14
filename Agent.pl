@@ -214,7 +214,7 @@ certainWumpus(X, Y) :-
     setof(R,stench(R),S), %H is going to be used as reference, and T will help
     stenchCertain(S, [r(X2,Y2)]),
     (\+actual_wumpus(X2,Y2) -> assertz(actual_wumpus(X2,Y2)); true),
-    X1 = X, Y1 = Y
+    X2 = X, Y2 = Y
     ), !;
    (
     getAdjacentRooms(r(X,Y), N),
