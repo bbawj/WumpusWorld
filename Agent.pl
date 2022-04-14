@@ -189,6 +189,7 @@ shoot(L) :-
 % Evaluates possibility of Wumpus in a certain room. Checks if all
 % adjacent rooms that were visited had stench
 wumpus(X, Y) :-
+  \+safe(X,Y),
   \+dead_wumpus(yes),
   (certainWumpus(X,Y)  ;   
   (\+visited(r(X,Y)), getAdjacentRooms(r(X,Y),LA), trimNotVisited(LA,LT), (checkStenchList(LT)))).
@@ -212,6 +213,7 @@ certainWumpus(X, Y) :-
 % Evaluates possibility of confundus in a certain room. Checks if all adjacent
 % rooms that were visited had tingles
 confundus(X,Y) :- 
+  \+safe(X,Y),
   certainConfundus(X,Y);
   (\+visited(r(X,Y)), getAdjacentRooms(r(X,Y),LA), trimNotVisited(LA,LT), (checkTingleList(LT))).
 checkTingleList([]) :- false.
@@ -303,7 +305,7 @@ bfs([[Goal|Visited]|_], Path):-
 
 bfs([Visited|Rest], Path) :-                     % take one from front
     Visited = [Start|_],            
-    \+safe(Start),
+    (wall(Start); \+safe(Start)),
     bfs(Rest, Path), !.
 
 bfs([Visited|Rest], Path) :-                     % take one from front
@@ -320,8 +322,6 @@ filterRooms([], _, Final, Sol) :- Sol = Final, !.
 filterRooms([H|T], Visited, Final, Sol) :-
   member(H, Visited) -> filterRooms(T, Visited, Final, Sol);
   filterRooms(T, Visited, [H|Final], Sol).
-
-
 
 %% Dfs starting from a root
 dfs(Root, Path) :-
