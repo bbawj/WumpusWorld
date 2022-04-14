@@ -1,6 +1,7 @@
 import random
 import Cell
 
+
 class WorldMap:
     def __init__(self, columns=7, rows=6, num_coins=1, num_wumpus=1, num_portals=3, num_walls=3):
         if columns < 3:
@@ -112,7 +113,6 @@ class WorldMap:
 
     def assignCoin(self):
         for i in range(self.num_coins):
-            print("B")
             y, x = self.getEmptyPos()
             self.map[y][x].coin = True
             self.map[y][x].glitter = True
@@ -122,6 +122,13 @@ class WorldMap:
             y, x = self.getEmptyPos()
             self.map[y][x].wall = True
             self.map[y][x].empty = False
+
+    def assignAgent(self, direction):
+        y, x = self.getSafePos()
+        self.map[y][x].agent = True
+        self.map[y][x].direction = direction
+        self.map[y][x].empty = False
+        return y, x
 
     ########################################## UTIL FUNCTIONS ##################################################################
 
@@ -182,4 +189,50 @@ class WorldMap:
         y, x = self.agent_loc
         self.map[y][x].direction = direction
 
+    def getPercepts(self):
+        y, x = self.agent_loc
+        return self.map[y][x].getPLPercept()
 
+    def buildTestWorld(self, columns, rows, num_coins, num_wumpus, num_portals, num_walls,
+                       wall_loc, wumpus_loc, portal_loc, coin_loc):
+
+        self.map = [[Cell.Cell() for i in range(self.columns)] for j in range(self.rows)]
+
+        # Init objects
+        self.buildSurroundingWalls()
+        self.assignTestWumpus(wumpus_loc=wumpus_loc)
+        self.assignTestPortal(portal_loc=portal_loc)
+        self.assignTestWalls(wall_loc=wall_loc)
+        self.assignTestCoin(coin_loc=coin_loc)
+
+    def assignTestWumpus(self, wumpus_loc):
+        y, x = wumpus_loc
+        self.map[y][x].wumpus = True
+        self.map[y][x].empty = False
+        self.assignStench(y, x, True)
+
+    def assignTestPortal(self, portal_loc):
+        for loc in portal_loc:
+            y, x = loc
+            self.map[y][x].portal = True
+            self.map[y][x].empty = False
+            self.assignTingle(y, x)
+
+    def assignTestWalls(self, wall_loc):
+        for loc in wall_loc:
+            y, x = loc
+            self.map[y][x].wall = True
+            self.map[y][x].empty = False
+
+    def assignTestCoin(self, coin_loc):
+        for loc in coin_loc:
+            y, x = loc
+            self.map[y][x].coin = True
+            self.map[y][x].glitter = True
+
+    def assignTestAgent(self, agent_loc, direction):
+        y, x = agent_loc
+        self.map[y][x].agent = True
+        self.map[y][x].direction = direction
+        self.map[y][x].empty = False
+        return y, x

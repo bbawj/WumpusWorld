@@ -1,11 +1,14 @@
-import Agent
-import WorldMap
-import Driver
-import Player
-import Cell
+import Test
 
-a = Agent.Agent()
-w = WorldMap.WorldMap(num_coins=3)
-d = Driver.Driver(agent=a, world=w)
-p = Player.Player(driver=d)
-p.play()
+t = Test.Test(agent="Agent.pl")
+env1_actions = ['moveforward','moveforward','moveforward',
+                'turnright','moveforward',
+                'turnright','moveforward',
+                'turnright','moveforward','moveforward',
+                'turnright','turnright']
+#t.env1_test1_localMapping(actions = env1_actions)
+#t.env1_test2_SensoryInteference(actions = env1_actions)
+#t.env1_test3_PortalReset(actions = env1_actions, arrow=True)
+#t.env1_test4_explore()
+#t.env1_test5_GameReset(actions = env1_actions, arrow=True)
+t.randomExplore()
