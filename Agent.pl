@@ -253,7 +253,7 @@ safe(r(X,Y)) :-
 explore(P, A) :-
   \+ is_list(P),
   current(r(X,Y), D),
-  dfs(r(X,Y), P),
+  bfs([[r(X,Y)]], P),
   convertPathToMoves(P, D, [], A).
 
 % explore with a list of nodes will return true if all nodes connected and leads to safe and unvisited node
@@ -295,7 +295,30 @@ getRoomFromMove(r(X,Y), D, A, N) :-
     (A=[moveforward], D=rsouth) -> N=r(X,YD) ;
     N = r(X,Y)
   ).
-  
+
+consed( A, B, [B|A]).
+bfs([[Goal|Visited]|_], Path):-
+  safe(Goal), \+visited(Goal), \+wall(Goal), 
+  reverse([Goal|Visited], Path), !.
+
+bfs([Visited|Rest], Path) :-                     % take one from front
+    Visited = [Start|_],            
+    safe(Start),
+    getAdjacentRooms(Start, L),
+    filterRooms(L, Visited, [], [T|Extend]),
+    maplist( consed(Visited), [T|Extend], VisitedExtended),      % make many
+    append( Rest, VisitedExtended, UpdatedQueue),       % put them at the end
+    bfs(UpdatedQueue, Path ).
+
+filterRooms([], _, Final, Sol) :- Sol = Final.
+
+filterRooms([H|T], Visited, Final, Sol) :-
+  member(H, Visited), filterRooms(T, Visited, Final, Sol).
+
+filterRooms([H|T], Visited, Final, Sol) :-
+  \+member(H, Visited), filterRooms(T, Visited, [H|Final], Sol).
+
+
 %% Dfs starting from a root
 dfs(Root, Path) :-
   dfs([Root], [], Path).
