@@ -36,6 +36,7 @@ visited(r(0, 0)).
 
 reborn :- 
   retractall(current(_,_)),
+  retractall(actual_wumpus(_,_)),
   retractall(stench(_)),
   retractall(shot(_)),
   retractall(visited(_)),
@@ -47,6 +48,7 @@ reborn :-
 
 reposition :- 
   retractall(current(_,_)),
+  retractall(actual_wumpus(_,_)),
   retractall(stench(_)),
   retractall(shot(_)),
   retractall(visited(_)),
@@ -117,7 +119,7 @@ add_wall_kb(r(X,Y)):-
   \+ wall(r(X,Y)) -> assertz(wall(r(X,Y))) ; true.
 
 % Senses screm if wumpus have died
-has_scream(yes) :- assertz(dead_wumpus(yes)), retractall(stench(_)), !.
+has_scream(yes) :- assertz(dead_wumpus(yes)), retractall(stench(_)), retractall(actual_wumpus(_,_)), !.
 has_scream(no).
 
 % Returns the current percetions
@@ -256,7 +258,7 @@ safe(X,Y) :- safe(r(X,Y)).
 
 safe(r(X,Y)) :- 
   visited(r(X,Y)) -> true ;
-  actual_wumpus(X1, Y1) -> (X\=X1, Y\=Y1, getAdjacentRooms(r(X,Y), L), trimNotVisited(L, LT), \+maplist(tingle, LT)) ;
+  actual_wumpus(X1, Y1) -> ((X\=X1;Y\=Y1), getAdjacentRooms(r(X,Y), L), trimNotVisited(L, LT), \+maplist(tingle, LT)) ;
   (getAdjacentRooms(r(X,Y), L), trimNotVisited(L, LT), (\+maplist(stench, LT) , \+maplist(tingle, LT))).
 
 % true if the list L contains a sequence of actions that leads the Agent to inhabit a safe and
@@ -266,7 +268,11 @@ explore(L) :-
   \+ is_list(L),
   current(r(X,Y), D),
   bfs([[r(X,Y)]], P),
-  (P = [] -> (bfsOrigin([[r(X,Y)]], OP), convertPathToMoves(OP, D, [], L) ) ; convertPathToMoves(P, D, [], L)), !.
+  (
+    actual_wumpus(_, _) -> (bfsWumpus([[r(X, Y)]], SP), convertPathToShoot(SP, D, [], L)) ; 
+    P = [] -> (bfsOrigin([[r(X,Y)]], OP), convertPathToMoves(OP, D, [], L) ) ; 
+    convertPathToMoves(P, D, [], L)
+  ), !.
 
 % explore with a list of nodes will return true if all nodes connected and leads to safe and unvisited node
 explore(L) :-
@@ -351,6 +357,27 @@ bfsOrigin([Visited|Rest], Path) :-                     % take one from front
     append( Rest, VisitedExtended, UpdatedQueue),       % put them at the end
     bfsOrigin(UpdatedQueue, Path ).
 
+bfsWumpus([], Path) :- Path = [], !.
+
+bfsWumpus([[r(X,Y)|Visited]|_], Path):-
+  actual_wumpus(X,Y), 
+  reverse([r(X,Y)|Visited], Path), !.
+
+bfsWumpus([Visited|Rest], Path) :-                     % take one from front
+    Visited = [Start|_],            
+    (wall(Start); \+safe(Start)),
+    bfsWumpus(Rest, Path), !.
+
+bfsWumpus([Visited|Rest], Path) :-                     % take one from front
+    Visited = [Start|_],            
+    safe(Start),
+    Start = r(X1,Y1), \+actual_wumpus(X1,Y1),
+    getAdjacentRooms(Start, L),
+    filterRooms(L, Visited, [], Y),
+    maplist( consed(Visited), Y, VisitedExtended),      % make many
+    append( Rest, VisitedExtended, UpdatedQueue),       % put them at the end
+    bfsWumpus(UpdatedQueue, Path ).
+
 filterRooms([], _, Final, Sol) :- Sol = Final, !.
 
 filterRooms([H|T], Visited, Final, Sol) :-
@@ -404,6 +431,51 @@ convertPathToMoves([r(X,Y)|T], CurrentDirection, Moves, FinalMoves) :-
     (1 is Y1-Y, CurrentDirection=rwest) -> (append(Moves,[[turnright, moveforward]], UpdatedMoves), ND=rnorth)
   ),
   convertPathToMoves(T, ND, UpdatedMoves, FinalMoves).
+
+convertPathToShoot([r(X,Y)|T], CurrentDirection, Moves, FinalMoves) :-
+  length(T, 1),
+  getFirstElement(T, r(X1, Y1)),
+  (
+    (1 is X1-X, CurrentDirection=rnorth) -> (append(Moves, [[turnright, shoot]], UpdatedMoves), ND=reast) ;
+    (1 is X1-X, CurrentDirection=rsouth) -> (append(Moves, [[turnleft, shoot]], UpdatedMoves), ND=reast) ;
+    (1 is X1-X, CurrentDirection=reast) -> (append(Moves,[[shoot]], UpdatedMoves) , ND=reast);
+    (1 is X1-X, CurrentDirection=rwest) -> (append(Moves,[[turnleft, turnleft, shoot]], UpdatedMoves), ND=reast) ;
+    (1 is X-X1, CurrentDirection=rnorth) -> (append(Moves,[[turnleft, shoot]], UpdatedMoves), ND=rwest) ;
+    (1 is X-X1, CurrentDirection=rsouth) -> (append(Moves,[[turnright, shoot]], UpdatedMoves), ND=rwest) ;
+    (1 is X-X1, CurrentDirection=reast) -> (append(Moves,[[turnleft, turnleft, shoot]], UpdatedMoves), ND=rwest) ;
+    (1 is X-X1, CurrentDirection=rwest) -> (append(Moves,[[shoot]], UpdatedMoves), ND=rwest);
+    (1 is Y-Y1, CurrentDirection=rnorth) -> (append(Moves,[[turnleft, turnleft, shoot]], UpdatedMoves), ND=rsouth) ;
+    (1 is Y-Y1, CurrentDirection=rsouth) -> (append(Moves,[[shoot]], UpdatedMoves), ND=rsouth) ;
+    (1 is Y-Y1, CurrentDirection=reast) -> (append(Moves,[[turnright, shoot]], UpdatedMoves), ND=rsouth) ;
+    (1 is Y-Y1, CurrentDirection=rwest) -> (append(Moves,[[turnleft, shoot]], UpdatedMoves), ND=rsouth) ;
+    (1 is Y1-Y, CurrentDirection=rnorth) -> (append(Moves,[[shoot]], UpdatedMoves), ND=rnorth) ;
+    (1 is Y1-Y, CurrentDirection=rsouth) -> (append(Moves,[[turnleft, turnleft, shoot]], UpdatedMoves), ND=rnorth) ;
+    (1 is Y1-Y, CurrentDirection=reast) -> (append(Moves,[[turnleft, shoot]], UpdatedMoves), ND=rnorth) ;
+    (1 is Y1-Y, CurrentDirection=rwest) -> (append(Moves,[[turnright, shoot]], UpdatedMoves), ND=rnorth)
+  ), 
+  FinalMoves = UpdatedMoves, !.
+
+convertPathToShoot([r(X,Y)|T], CurrentDirection, Moves, FinalMoves) :-
+  getFirstElement(T, r(X1, Y1)),
+  (
+    (1 is X1-X, CurrentDirection=rnorth) -> (append(Moves, [[turnright, moveforward]], UpdatedMoves), ND=reast) ;
+    (1 is X1-X, CurrentDirection=rsouth) -> (append(Moves, [[turnleft, moveforward]], UpdatedMoves), ND=reast) ;
+    (1 is X1-X, CurrentDirection=reast) -> (append(Moves,[[moveforward]], UpdatedMoves) , ND=reast);
+    (1 is X1-X, CurrentDirection=rwest) -> (append(Moves,[[turnleft, turnleft, moveforward]], UpdatedMoves), ND=reast) ;
+    (1 is X-X1, CurrentDirection=rnorth) -> (append(Moves,[[turnleft, moveforward]], UpdatedMoves), ND=rwest) ;
+    (1 is X-X1, CurrentDirection=rsouth) -> (append(Moves,[[turnright, moveforward]], UpdatedMoves), ND=rwest) ;
+    (1 is X-X1, CurrentDirection=reast) -> (append(Moves,[[turnleft, turnleft, moveforward]], UpdatedMoves), ND=rwest) ;
+    (1 is X-X1, CurrentDirection=rwest) -> (append(Moves,[[moveforward]], UpdatedMoves), ND=rwest);
+    (1 is Y-Y1, CurrentDirection=rnorth) -> (append(Moves,[[turnleft, turnleft, moveforward]], UpdatedMoves), ND=rsouth) ;
+    (1 is Y-Y1, CurrentDirection=rsouth) -> (append(Moves,[[moveforward]], UpdatedMoves), ND=rsouth) ;
+    (1 is Y-Y1, CurrentDirection=reast) -> (append(Moves,[[turnright, moveforward]], UpdatedMoves), ND=rsouth) ;
+    (1 is Y-Y1, CurrentDirection=rwest) -> (append(Moves,[[turnleft, moveforward]], UpdatedMoves), ND=rsouth) ;
+    (1 is Y1-Y, CurrentDirection=rnorth) -> (append(Moves,[[moveforward]], UpdatedMoves), ND=rnorth) ;
+    (1 is Y1-Y, CurrentDirection=rsouth) -> (append(Moves,[[turnleft, turnleft, moveforward]], UpdatedMoves), ND=rnorth) ;
+    (1 is Y1-Y, CurrentDirection=reast) -> (append(Moves,[[turnleft, moveforward]], UpdatedMoves), ND=rnorth) ;
+    (1 is Y1-Y, CurrentDirection=rwest) -> (append(Moves,[[turnright, moveforward]], UpdatedMoves), ND=rnorth)
+  ),
+  convertPathToShoot(T, ND, UpdatedMoves, FinalMoves).
 
 getRelativeAdjacentRooms(r(X,Y), D, L) :-
   XL is X-1,
