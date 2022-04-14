@@ -306,7 +306,7 @@ dfs([H|_], Visited, Path) :-
 %% Skip elements that are already visited
 dfs([H|T],Visited, Path) :-
   (member(H,Visited) ; \+safe(H)),
-  dfs(T,Visited, Path).
+  dfs(T,Visited, Path), !.
 %% Add all neigbors of the head to the toVisit
 dfs([H|T],Visited, Path) :-
   not(member(H,Visited)),
