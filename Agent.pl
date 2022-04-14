@@ -198,7 +198,16 @@ certainWumpus(X, Y) :-
    trimNotAdjacent(LW, T, LNA),
    length(LNA, 1), %If only one room is reached, that is where the wumpus is
    LW = [r(X,Y)]
-   ).
+   ) ; 
+   (
+    getAdjacentRooms(r(X,Y), N),
+    trimStench(N, [], NL),
+    (length(NL,0) ; length(NL, 1))
+    ).
+
+trimStench([], L, NL) :- NL = L .
+trimStench([H|T], L, NL) :-
+  \+stench(H) -> trimStench(T, [H|L], NL); trimStench(T, L, NL).
 
 % Evaluates possibility of confundus in a certain room. Checks if all adjacent
 % rooms that were visited had tingles
