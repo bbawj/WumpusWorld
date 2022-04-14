@@ -289,6 +289,9 @@ getRoomFromMove(r(X,Y), D, A, N) :-
   ).
 
 consed( A, B, [B|A]).
+
+bfs([], Path) :- false, !.
+
 bfs([[Goal|Visited]|_], Path):-
   safe(Goal), \+visited(Goal), \+wall(Goal), 
   reverse([Goal|Visited], Path), !.
