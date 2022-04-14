@@ -154,11 +154,10 @@ turnLeft :-
 
 turnRight :- 
   current(r(X,Y),D),
-  (
-    (D = reast, ND = rsouth);
-    (D = rsouth, ND = rwest);
-    (D = rwest, ND = rnorth);
-    (D = rnorth, ND = reast)),
+  (D = reast, ND = rsouth, !;
+  D = rsouth, ND = rwest, !;
+  D = rwest, ND = rnorth, !;
+  D = rnorth, ND = reast, !),
   retractall(current(_,_)),
   asserta(current(r(X,Y),ND)).
 
@@ -290,7 +289,7 @@ getRoomFromMove(r(X,Y), D, A, N) :-
 
 consed( A, B, [B|A]).
 
-bfs([], Path) :- false, !.
+bfs([], Path) :- Path = [], !.
 
 bfs([[Goal|Visited]|_], Path):-
   safe(Goal), \+visited(Goal), \+wall(Goal), 
