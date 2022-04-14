@@ -214,8 +214,8 @@ certainWumpus(X, Y) :-
 % rooms that were visited had tingles
 confundus(X,Y) :- 
   \+safe(X,Y),
-  certainConfundus(X,Y);
-  (\+visited(r(X,Y)), getAdjacentRooms(r(X,Y),LA), trimNotVisited(LA,LT), (checkTingleList(LT))).
+  (certainConfundus(X,Y);
+  (\+visited(r(X,Y)), getAdjacentRooms(r(X,Y),LA), trimNotVisited(LA,LT), (checkTingleList(LT)))).
 checkTingleList([]) :- false.
 checkTingleList([H|T]) :- checkTingleList(T) ; tingle(H).
 
