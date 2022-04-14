@@ -213,6 +213,12 @@ certainWumpus(X, Y) :-
    LNA = [r(X,Y)]
    ), ! ; 
    (
+    setof(R,stench(R),S), %H is going to be used as reference, and T will help
+    stenchCertain(S, [r(X2,Y2)]),
+    (\+actual_wumpus(X2,Y2) -> assertz(actual_wumpus(X2,Y2)); true),
+    X1 = X, Y1 = Y
+    ), !;
+   (
     getAdjacentRooms(r(X,Y), N),
     trimStench(N, [], NL),
     (length(NL,0) ; length(NL, 1))
@@ -221,6 +227,14 @@ certainWumpus(X, Y) :-
 trimStench([], L, NL) :- NL = L .
 trimStench([H|T], L, NL) :-
   \+stench(H) -> trimStench(T, [H|L], NL); trimStench(T, L, NL).
+
+stenchCertain([], C) :- C=[], false.
+
+stenchCertain([H|T], C):-
+  getAdjacentRooms(H,LA), %get all adjacent rooms to stench squares
+  trimVisited(LA,LAT),
+  trimWall(LAT, LW),
+  length(LW, 1) -> C=LW; stenchCertain(T,C).  %If only one room is reached, that is where the wumpus is
 
 % Evaluates possibility of confundus in a certain room. Checks if all adjacent
 % rooms that were visited had tingles
