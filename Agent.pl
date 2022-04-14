@@ -1,5 +1,6 @@
 :- abolish(current/2).
 :- abolish(dead_wumpus/1).
+:- abolish(actual_wumpus/2).
 :- abolish(stench/1).
 :- abolish(tingle/1).
 :- abolish(glitter/2).
@@ -13,6 +14,7 @@
 :- dynamic([
   current/2,
   dead_wumpus/1,
+  actual_wumpus/2,
   stench/1,
   tingle/1,
   glitter/2,
@@ -180,10 +182,14 @@ shoot(L) :-
 wumpus(X, Y) :-
   \+safe(X,Y),
   \+dead_wumpus(yes),
-  (certainWumpus(X,Y)  ;   
-  (\+visited(r(X,Y)), getAdjacentRooms(r(X,Y),LA), trimNotVisited(LA,LT), (checkStenchList(LT)))).
-checkStenchList([]) :- false.
-checkStenchList([H|T]) :- checkStenchList(T) ; stench(H).
+  (
+    certainWumpus(X,Y) -> true  ;   
+    (\+visited(r(X,Y)), getAdjacentRooms(r(X,Y),LA), trimNotVisited(LA,LT), checkStenchList(LT))
+  ),
+  (actual_wumpus(X1,Y1) -> (X = X1, Y = Y1) ; true).
+
+checkStenchList([]) :- false, !.
+checkStenchList([H|T]) :- \+stench(H) -> checkStenchList(T); true.
 
 % More easily than checking for confunduss, as we know there is only one
 % Wumpus, one can mix and match adjacent rooms of two or more rooms with
@@ -196,13 +202,16 @@ certainWumpus(X, Y) :-
    trimVisited(LA,LAT), %get unvisited rooms adjacent to stench
    trimWall(LAT, LW),
    trimNotAdjacent(LW, T, LNA),
-   length(LNA, 1) %If only one room is reached, that is where the wumpus is
+   length(LNA, 1) ,  %If only one room is reached, that is where the wumpus is
+   LNA=[r(X1, Y1)], 
+   (\+actual_wumpus(X1, Y1) -> assertz(actual_wumpus(X1, Y1)) ; true),
+   LNA = [r(X,Y)]
    ), ! ; 
    (
     getAdjacentRooms(r(X,Y), N),
     trimStench(N, [], NL),
     (length(NL,0) ; length(NL, 1))
-    ).
+    ) -> (\+actual_wumpus(X,Y) -> assertz(actual_wumpus(X,Y)); true) ; false.
 
 trimStench([], L, NL) :- NL = L .
 trimStench([H|T], L, NL) :-
