@@ -50,7 +50,6 @@ reposition :-
   retractall(current(_,_)),
   retractall(actual_wumpus(_,_)),
   retractall(stench(_)),
-  retractall(shot(_)),
   retractall(visited(_)),
   retractall(wall(_)),
   retractall(tingle(_)),
@@ -62,7 +61,6 @@ reposition :-
 reposition(L) :- 
   retractall(current(_,_)),
   retractall(stench(_)),
-  retractall(shot(_)),
   retractall(visited(_)),
   retractall(wall(_)),
   retractall(tingle(_)),
