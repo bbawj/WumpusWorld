@@ -256,22 +256,22 @@ safe(X,Y) :- safe(r(X,Y)).
 
 safe(r(X,Y)) :- 
   visited(r(X,Y)) -> true ;
-  (getAdjacentRooms(r(X,Y), L), trimNotVisited(L, LT), (\+maplist(stench, LT) , \+maplist(tingle, LT))
-  ).
+  actual_wumpus(X1, Y1) -> (X\=X1, Y\=Y1) ;
+  (getAdjacentRooms(r(X,Y), L), trimNotVisited(L, LT), (\+maplist(stench, LT) , \+maplist(tingle, LT))).
 
 % true if the list L contains a sequence of actions that leads the Agent to inhabit a safe and
 % non-visited location.
 % explore with a variable will return a dfs path
-explore(P, A) :-
-  \+ is_list(P),
+explore(L) :-
+  \+ is_list(L),
   current(r(X,Y), D),
   bfs([[r(X,Y)]], P),
-  convertPathToMoves(P, D, [], A).
+  (P = [] -> (bfsOrigin([[r(X,Y)]], OP), convertPathToMoves(OP, D, [], L) ) ; convertPathToMoves(P, D, [], L)), !.
 
 % explore with a list of nodes will return true if all nodes connected and leads to safe and unvisited node
 explore(L) :-
   current(r(X,Y), D),
-  ensureActions(L, r(X,Y), D).
+  ensureActions(L, r(X,Y), D), !.
 
 ensureActions([H|T], CurrentRoom, D) :-
   getRoomFromMove(CurrentRoom, D, H, N),
@@ -329,6 +329,27 @@ bfs([Visited|Rest], Path) :-                     % take one from front
     maplist( consed(Visited), Y, VisitedExtended),      % make many
     append( Rest, VisitedExtended, UpdatedQueue),       % put them at the end
     bfs(UpdatedQueue, Path ).
+
+bfsOrigin([], Path) :- Path = [], !.
+
+bfsOrigin([[Goal|Visited]|_], Path):-
+  Goal = r(0,0), 
+  reverse([Goal|Visited], Path), !.
+
+bfsOrigin([Visited|Rest], Path) :-                     % take one from front
+    Visited = [Start|_],            
+    (wall(Start); \+safe(Start)),
+    bfsOrigin(Rest, Path), !.
+
+bfsOrigin([Visited|Rest], Path) :-                     % take one from front
+    Visited = [Start|_],            
+    safe(Start),
+    Start \== r(0,0),
+    getAdjacentRooms(Start, L),
+    filterRooms(L, Visited, [], Y),
+    maplist( consed(Visited), Y, VisitedExtended),      % make many
+    append( Rest, VisitedExtended, UpdatedQueue),       % put them at the end
+    bfsOrigin(UpdatedQueue, Path ).
 
 filterRooms([], _, Final, Sol) :- Sol = Final, !.
 
