@@ -196,9 +196,8 @@ certainWumpus(X, Y) :-
    trimVisited(LA,LAT), %get unvisited rooms adjacent to stench
    trimWall(LAT, LW),
    trimNotAdjacent(LW, T, LNA),
-   length(LNA, 1), %If only one room is reached, that is where the wumpus is
-   LW = [r(X,Y)]
-   ) ; 
+   length(LNA, 1) %If only one room is reached, that is where the wumpus is
+   ), ! ; 
    (
     getAdjacentRooms(r(X,Y), N),
     trimStench(N, [], NL),
@@ -269,7 +268,7 @@ ensureActions([H|T], CurrentRoom, D) :-
   (length(T, 0) -> \+visited(N); ensureActions(T, N, ND)).
 
 % Helper functions to get first Node from list
-getFirstElement([], N).
+getFirstElement([], _).
 getFirstElement([H|_], N) :- N = H.
 
 getRoomFromMove(r(X,Y), D, A, N) :-
