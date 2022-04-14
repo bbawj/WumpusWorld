@@ -396,28 +396,6 @@ filterRooms([H|T], Visited, Final, Sol) :-
   member(H, Visited) -> filterRooms(T, Visited, Final, Sol);
   filterRooms(T, Visited, [H|Final], Sol).
 
-%% Dfs starting from a root
-dfs(Root, Path) :-
-  dfs([Root], [], Path).
-%% dfs(ToVisit, Visited)
-%% Done, all visited
-dfs([],_, _).
-%found a safe unvisited node
-dfs([H|_], Visited, Path) :-
-  \+member(H, Visited), safe(H), \+visited(H), \+wall(H), append(Visited,[H], UpdatedVisitedList), Path = UpdatedVisitedList, !.
-%% Skip elements that are already visited
-dfs([H|T],Visited, Path) :-
-  (member(H,Visited) ; wall(H); \+safe(H)),
-  dfs(T,Visited, Path), !.
-%% Add all neigbors of the head to the toVisit
-dfs([H|T],Visited, Path) :-
-  not(member(H,Visited)),
-  safe(H),
-  getAdjacentRooms(H, L),
-  append(L,T, ToVisit),
-  append(Visited, [H], UpdatedVisitedList),
-  dfs(ToVisit,UpdatedVisitedList, Path).
-
 convertPathToMoves(L, _, UpdatedMoves, FinalMoves) :-
   length(L, 1),
   FinalMoves = UpdatedMoves, !.
