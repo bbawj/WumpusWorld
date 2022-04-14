@@ -303,20 +303,24 @@ bfs([[Goal|Visited]|_], Path):-
 
 bfs([Visited|Rest], Path) :-                     % take one from front
     Visited = [Start|_],            
+    \+safe(Start),
+    bfs(Rest, Path), !.
+
+bfs([Visited|Rest], Path) :-                     % take one from front
+    Visited = [Start|_],            
     safe(Start),
     getAdjacentRooms(Start, L),
-    filterRooms(L, Visited, [], [T|Extend]),
-    maplist( consed(Visited), [T|Extend], VisitedExtended),      % make many
+    filterRooms(L, Visited, [], Y),
+    maplist( consed(Visited), Y, VisitedExtended),      % make many
     append( Rest, VisitedExtended, UpdatedQueue),       % put them at the end
     bfs(UpdatedQueue, Path ).
 
-filterRooms([], _, Final, Sol) :- Sol = Final.
+filterRooms([], _, Final, Sol) :- Sol = Final, !.
 
 filterRooms([H|T], Visited, Final, Sol) :-
-  member(H, Visited), filterRooms(T, Visited, Final, Sol).
+  member(H, Visited) -> filterRooms(T, Visited, Final, Sol);
+  filterRooms(T, Visited, [H|Final], Sol).
 
-filterRooms([H|T], Visited, Final, Sol) :-
-  \+member(H, Visited), filterRooms(T, Visited, [H|Final], Sol).
 
 
 %% Dfs starting from a root
