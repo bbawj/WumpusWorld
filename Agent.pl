@@ -37,6 +37,7 @@ visited(r(0, 0)).
 reborn :- 
   retractall(current(_,_)),
   retractall(stench(_)),
+  retractall(shot(_)),
   retractall(visited(_)),
   retractall(wall(_)),
   retractall(tingle(_)),
@@ -47,6 +48,7 @@ reborn :-
 reposition :- 
   retractall(current(_,_)),
   retractall(stench(_)),
+  retractall(shot(_)),
   retractall(visited(_)),
   retractall(wall(_)),
   retractall(tingle(_)),
@@ -58,6 +60,7 @@ reposition :-
 reposition(L) :- 
   retractall(current(_,_)),
   retractall(stench(_)),
+  retractall(shot(_)),
   retractall(visited(_)),
   retractall(wall(_)),
   retractall(tingle(_)),
