@@ -136,12 +136,14 @@ moveForward(L) :-
   current(r(X,Y),D),
   getForwardRoom(r(X,Y),D, N),
   perceptions(L, N),
-  (is_confounded(yes) -> retractall(is_confounded(_));
-  \+wall(N) -> (
-    retractall(current(_,_)),
-    assertz(visited(N)),
-    assertz(current(N,D)),
-    write("I am at: "), write(N), write(D)) ; false).
+  (
+    is_confounded(yes) -> retractall(is_confounded(_));
+    \+wall(N) -> (
+      retractall(current(_,_)),
+      assertz(visited(N)),
+      assertz(current(N,D)),
+      write("I am at: "), write(N), write(D)) ; false
+  ).
 
 turnLeft :- 
   current(r(X,Y),D),
@@ -255,9 +257,9 @@ explore(P, A) :-
   convertPathToMoves(P, D, [], A).
 
 % explore with a list of nodes will return true if all nodes connected and leads to safe and unvisited node
-% explore(L) :-
-%   current(r(X,Y), D),
-%   ensureActions(L, r(X,Y), D).
+explore(L) :-
+  current(r(X,Y), D),
+  ensureActions(L, r(X,Y), D).
 
 ensureActions([H|T], CurrentRoom, D) :-
   getRoomFromMove(CurrentRoom, D, H, N),
@@ -302,10 +304,10 @@ dfs(Root, Path) :-
 dfs([],_, _).
 %found a safe unvisited node
 dfs([H|_], Visited, Path) :-
-  \+member(H, Visited), safe(H), \+visited(H), append(Visited,[H], UpdatedVisitedList), Path = UpdatedVisitedList, !.
+  \+member(H, Visited), safe(H), \+visited(H), \+wall(H), append(Visited,[H], UpdatedVisitedList), Path = UpdatedVisitedList, !.
 %% Skip elements that are already visited
 dfs([H|T],Visited, Path) :-
-  (member(H,Visited) ; \+safe(H)),
+  (member(H,Visited) ; wall(H); \+safe(H)),
   dfs(T,Visited, Path), !.
 %% Add all neigbors of the head to the toVisit
 dfs([H|T],Visited, Path) :-
