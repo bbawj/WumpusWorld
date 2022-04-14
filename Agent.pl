@@ -256,7 +256,7 @@ safe(X,Y) :- safe(r(X,Y)).
 
 safe(r(X,Y)) :- 
   visited(r(X,Y)) -> true ;
-  actual_wumpus(X1, Y1) -> (X\=X1, Y\=Y1) ;
+  actual_wumpus(X1, Y1) -> (X\=X1, Y\=Y1, getAdjacentRooms(r(X,Y), L), trimNotVisited(L, LT), \+maplist(tingle, LT)) ;
   (getAdjacentRooms(r(X,Y), L), trimNotVisited(L, LT), (\+maplist(stench, LT) , \+maplist(tingle, LT))).
 
 % true if the list L contains a sequence of actions that leads the Agent to inhabit a safe and
