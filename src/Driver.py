@@ -10,17 +10,15 @@ class Driver:
         self.assignAgent()
 
     def assignAgent(self):
-        y, x = self.world.getSafePos()
-        self.world.map[y][x].agent = True
-        self.world.map[y][x].direction = self.agent.direction
-        self.world.map[y][x].empty = False
+        y, x = self.world.assignAgent(direction=self.agent.direction)
         self.world.agent_loc = (y, x)
         self.updateCellSafety(y, x)
-        self.passPercepts(self.world.map[y][x])
+        # self.passPercepts(self.world.map[y][x])
 
     ########################################## MOVING FUNCTIONS ###############################################################
 
     def moveAgentForward(self):
+        self.clearTransitions()
         current_dir = self.agent.direction
         y0, x0 = self.world.agent_loc
         y1, x1 = self.getNextCell(current_dir)
@@ -30,61 +28,41 @@ class Driver:
             y2, x2 = self.executePortal()
             self.updateAgentLocation(y0, x0, y2, x2)
             self.agent.resetPortal()
-            self.passPercepts(self.world.map[y2][x2])
+            # self.passPercepts(self.world.map[y2][x2])
             self.updateCellSafety(y2, x2)
+            return "portal"
 
         # If agent steps into Wumpus cell
         elif self.world.map[y1][x1].wumpus:
             print("You got eaten by ze Wumpus!")
             self.restartGame()
+            return "wumpus"
 
         elif self.world.map[y1][x1].wall:
             print("You bumped into a wall!")
             self.world.map[y0][x0].bump = True
-            self.passPercepts(self.world.map[y0][x0])
+            # self.passPercepts(self.world.map[y0][x0])
+            return "wall"
 
         # If agent steps into empty cell
         elif self.world.map[y1][x1].empty:
             self.updateAgentLocation(y0, x0, y1, x1)
-            self.agent.updateRelativeLocation()
             self.updateCellSafety(y1, x1)
-            self.passPercepts(self.world.map[y1][x1])
+            # self.passPercepts(self.world.map[y1][x1])
+            return "empty"
 
-    def faceAgentNorth(self):
-        while self.agent.direction != 0:
-            self.agent.turnRight()
+    def turnRight(self):
+        self.clearTransitions()
+        self.agent.turnRight()
 
-    def moveAgentNorth(self):
-        self.faceAgentNorth()
-        self.moveAgentForward()
-
-    def faceAgentEast(self):
-        while self.agent.direction != 1:
-            self.agent.turnRight()
-
-    def moveAgentEast(self):
-        self.faceAgentEast()
-        self.moveAgentForward()
-
-    def faceAgentSouth(self):
-        while self.agent.direction != 2:
-            self.agent.turnRight()
-
-    def moveAgentSouth(self):
-        self.faceAgentSouth()
-        self.moveAgentForward()
-
-    def faceAgentWest(self):
-        while self.agent.direction != 3:
-            self.agent.turnRight()
-
-    def moveAgentWest(self):
-        self.faceAgentWest()
-        self.moveAgentForward()
+    def turnLeft(self):
+        self.clearTransitions()
+        self.agent.turnLeft()
 
     ########################################## SHOOT FUNCTIONS ###############################################################
 
     def agentShoot(self):
+        self.clearTransitions()
         if self.agent.shoot():
             print("Pew pew shoot arrow pew pew")
             current_dir = self.agent.direction
@@ -192,8 +170,8 @@ class Driver:
         self.world.map[y][x].safe = True
         self.world.map[y][x].visited = True
 
-    def passPercepts(self, cell):
-        self.agent.getPercepts(cell)
+    def getPercepts(self):
+        return self.world.getPercepts()
 
     def clearTransitions(self):
         for row in self.world.map:
@@ -201,8 +179,29 @@ class Driver:
                 cell.bump = False
                 cell.scream = False
 
-        for row in self.agent.map.map:
-            for cell in row:
-                cell.bump = False
-                cell.scream = False
+    def pickup(self):
+        y, x = self.world.agent_loc
+        self.world.map[y][x].coin = False
 
+    def checkCoin(self):
+        y, x = self.world.agent_loc
+        return self.world.map[y][x].coin
+
+    ########################################## TESTING FUNCTIONS ###############################################################
+
+    def buildTestEnv(self, columns=7, rows=6, num_coins=1, num_wumpus=1, num_portals=3, num_walls=3,
+                     wall_loc=[(1, 1), (1, 2), (1, 3)],
+                     wumpus_loc=(2, 3),
+                     portal_loc=[(4, 1), (4, 3), (4, 5)],
+                     coin_loc=[(1, 5)],
+                     agent_loc=(3, 4),
+                     direction=0):
+
+        self.world.buildTestWorld(columns=columns, rows=rows, num_coins=num_coins, num_wumpus=num_wumpus,
+                                  num_portals=num_portals, num_walls=num_walls, wall_loc=wall_loc,
+                                  wumpus_loc=wumpus_loc,
+                                  portal_loc=portal_loc, coin_loc=coin_loc)
+        self.agent.direction = direction
+        y, x = self.world.assignTestAgent(agent_loc=agent_loc, direction=direction)
+        self.world.agent_loc = (y, x)
+        self.updateCellSafety(y, x)
