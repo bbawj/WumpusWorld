@@ -126,17 +126,17 @@ class Cell:
         self.empty = cell.empty
 
     def getPLPercept(self):
-        confounded, stench, tingle, coin, bump, scream = "no","no","no","no","no","no"
+        confounded, stench, tingle, coin, bump, scream = "off", "off", "off", "off", "off", "off"
         if self.confounded:
-            confounded = "yes"
+            confounded = "on"
         if self.stench:
-            stench = "yes"
+            stench = "on"
         if self.tingle:
-            tingle = "yes"
+            tingle = "on"
         if self.coin:
-            coin = "yes"
+            coin = "on"
         if self.bump:
-            bump = "yes"
+            bump = "on"
         if self.scream:
-            scream = "yes"
+            scream = "on"
         return "[" + confounded + ", " + stench + ", " + tingle + ", " + coin + ", " + bump + ", " + scream + "]"
