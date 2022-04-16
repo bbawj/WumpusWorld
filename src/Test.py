@@ -184,7 +184,7 @@ class Test:
 
     def portalReset(self):
         print("Simulating portal reset...")
-        list(self.prolog.query("reposition."))
+        list(self.prolog.query("reposition([on,off,off,off,off,off])."))
         self.plam.resetMap()
 
     def gameReset(self):
@@ -194,10 +194,11 @@ class Test:
         list(self.prolog.query("reborn."))
 
     def printAgentLoc(self, expected_loc, expected_dir):
-        agent_rel_loc = list(self.prolog.query("current(X,Y)."))
-        coords = agent_rel_loc[0]['X']
-        rel_dir = agent_rel_loc[0]['Y']
-        print("Agent relative location: \t " + expected_loc + " \t", coords)
+        agent_rel_loc = list(self.prolog.query("current(X,Y,D)."))
+        x = agent_rel_loc[0]['X']
+        y = agent_rel_loc[0]['Y']
+        rel_dir = agent_rel_loc[0]['D']
+        print("Agent relative location: \t " + expected_loc + " \t", (x, y))
         print("Agent relative direction: \t " + expected_dir + "\t\t", rel_dir)
 
     def executeMoves(self, moveList):
@@ -286,7 +287,7 @@ class Test:
 
         if next_cell == "portal":
             self.plam.resetMap()
-            list(self.prolog.query("reposition."))
+            list(self.prolog.query("reposition([on,off,off,off,off,off)."))
         if next_cell == "wumpus":
             self.plam.resetMap()
             list(self.prolog.query("reborn."))

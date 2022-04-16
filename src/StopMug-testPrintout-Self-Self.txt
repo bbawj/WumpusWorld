@@ -89,7 +89,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 | . . . | . . . | . . . | . . . | . . . | 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 				 Expected 	 Actual
-Agent relative location: 	 r(-1, 2) 	 r(-1, 2)
+Agent relative location: 	 r(-1, 2) 	 (-1, 2)
 Agent relative direction: 	 reast		 reast
 
 
@@ -308,7 +308,7 @@ Wumpus at (-1,1): 		 False 		 False
 Tingle at (0,3): 		 False 		 False
 Portal at (1,1): 		 False 		 False
 Agent has arrow: 		 False		 False
-Agent relative location: 	 r(0, 0) 	 r(0, 0)
+Agent relative location: 	 r(0, 0) 	 (0, 0)
 Agent relative direction: 	 rnorth		 rnorth
 
 
@@ -1131,5 +1131,5 @@ Wumpus at (-1,1): 		 False 		 False
 Tingle at (0,3): 		 False 		 False
 Portal at (1,1): 		 False 		 False
 Agent has arrow: 		 True 		 True
-Agent relative location: 	 r(0, 0) 	 r(0, 0)
+Agent relative location: 	 r(0, 0) 	 (0, 0)
 Agent relative direction: 	 rnorth		 rnorth
