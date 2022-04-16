@@ -84,41 +84,41 @@ hasarrow :- \+shot(yes).
 % Perceptions
 % ===========
 % Process glitter percept into KB
-has_glitter(yes, r(X,Y)) :- assertz(glitter(X,Y)), !.
-has_glitter(no, _).
+has_glitter(on, r(X,Y)) :- assertz(glitter(X,Y)), !.
+has_glitter(off, _).
 
 % Process tingle percept into KB
-has_tingle(yes, Node) :-
+has_tingle(on, Node) :-
   add_tingle_kb(Node).
-has_tingle(no, _).
+has_tingle(off, _).
 
 add_tingle_kb(r(X,Y)):-
   \+ tingle(r(X,Y)) -> assertz(tingle(r(X,Y))) ; true.
 
 % Process confounded percept into reposition?
-has_confounded(yes) :-
+has_confounded(on) :-
   reposition.
-has_confounded(no).
+has_confounded(off).
   
 % Process stench percept into KB
-has_stench(yes, Node) :-
+has_stench(on, Node) :-
   add_stench_kb(Node).
-has_stench(no, _).
+has_stench(off, _).
 
 add_stench_kb(r(X,Y)):-
   \+ stench(r(X,Y)) -> assertz(stench(r(X,Y))) ; true.
 
 % Add wall to KB if perceive bump
-has_bump(yes, Node) :-
+has_bump(on, Node) :-
   add_wall_kb(Node).
-has_bump(no, _).
+has_bump(off, _).
 
 add_wall_kb(r(X,Y)):-
   \+ wall(r(X,Y)) -> assertz(wall(r(X,Y))) ; true.
 
 % Senses screm if wumpus have died
-has_scream(yes) :- assertz(dead_wumpus(yes)), retractall(stench(_)), retractall(actual_wumpus(_,_)), !.
-has_scream(no).
+has_scream(on) :- assertz(dead_wumpus(yes)), retractall(stench(_)), retractall(actual_wumpus(_,_)), !.
+has_scream(off).
 
 % Returns the current percetions
 perceptions([Confounded, Stench, Tingle, Glitter, Bump, Scream], Node) :-
