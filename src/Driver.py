@@ -187,6 +187,7 @@ class Driver:
         y, x = self.world.agent_loc
         return self.world.map[y][x].coin
 
+
     ########################################## TESTING FUNCTIONS ###############################################################
 
     def buildTestEnv(self, columns=7, rows=6, num_coins=1, num_wumpus=1, num_portals=3, num_walls=3,

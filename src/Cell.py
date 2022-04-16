@@ -114,7 +114,7 @@ class Cell:
             print(".", end=" ")
 
     def printDirection(self):
-        direction_mapping = {0: "∧", 1: ">", 2: "∨", 3: "<"}
+        direction_mapping = {0: "^", 1: ">", 2: "v", 3: "<"}
         print(direction_mapping[self.direction], end=" ")
 
     def copyCell(self, cell):
@@ -128,17 +128,4 @@ class Cell:
         self.empty = cell.empty
 
     def getPLPercept(self):
-        confounded, stench, tingle, coin, bump, scream = "off", "off", "off", "off", "off", "off"
-        if self.confounded:
-            confounded = "on"
-        if self.stench:
-            stench = "on"
-        if self.tingle:
-            tingle = "on"
-        if self.coin:
-            coin = "on"
-        if self.bump:
-            bump = "on"
-        if self.scream:
-            scream = "on"
-        return "[" + confounded + ", " + stench + ", " + tingle + ", " + coin + ", " + bump + ", " + scream + "]"
+        return self.confounded, self.stench, self.tingle, self.confounded, self.bump, self.scream

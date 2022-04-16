@@ -1,4 +1,3 @@
-import PLAgentMap
 import Agent
 import PLAgentMap
 import Driver
@@ -26,7 +25,10 @@ class Test:
         self.play()
 
     def env1_test1_localMapping(self, actions):
+        self.initRest()
         self.d.buildTestEnv(direction=3)
+        self.d.printWorld()
+        self.printMap()
         for action in actions:
             self.executeAction(action)
         self.printMap()
@@ -34,8 +36,10 @@ class Test:
         self.printAgentLoc(expected_loc="r(-1, 2)", expected_dir="reast")
 
     def env1_test2_SensoryInteference(self, actions):
-
+        self.initRest()
         self.d.buildTestEnv(direction=3)
+        self.d.printWorld()
+        self.printMap()
         for action in actions:
             self.executeAction(action)
         self.printMap()
@@ -49,8 +53,10 @@ class Test:
         print("Portal at (1,1): \t\t True \t\t" + portalInferred)
 
     def env1_test3_PortalReset(self, actions, arrow):
-
+        self.initRest()
         self.d.buildTestEnv(direction=3)
+        self.d.printWorld()
+        self.printMap()
         for action in actions:
             self.executeAction(action)
         self.printMap()
@@ -88,6 +94,7 @@ class Test:
         self.printAgentLoc(expected_loc="r(0, 0)", expected_dir="rnorth")
 
     def env1_test4_explore(self):
+        self.initRest()
         self.d.buildTestEnv(columns=7, rows=6, num_coins=1, num_wumpus=1, num_portals=3, num_walls=3,
                             wall_loc=[(1, 2), (1, 3), (2, 5)],
                             wumpus_loc=(4, 3),
@@ -95,11 +102,15 @@ class Test:
                             coin_loc=[(1, 1)],
                             agent_loc=(2, 3),
                             direction=0)
+        self.d.printWorld()
+        self.printMap()
         self.play()
 
     def env1_test5_GameReset(self, actions, arrow):
-
+        self.initRest()
         self.d.buildTestEnv(direction=3)
+        self.d.printWorld()
+        self.printMap()
         for action in actions:
             self.executeAction(action)
         self.printMap()
@@ -212,7 +223,7 @@ class Test:
             return moveList
 
     def play(self):
-        self.printMap()
+        self.d.printWorld()
         moveList = self.getNextMoves()
         while (moveList):
             print(moveList)
@@ -221,15 +232,53 @@ class Test:
             moveList = self.getNextMoves()
         print("No more moves!")
 
+    def getPercepts(self):
+        conf, st, t, co, b, sc = self.d.getPercepts()
+        percepts = self.translatePLPercepts(conf, st, t, co, b, sc)
+        self.printPercepts(conf, st, t, co, b, sc)
+        return percepts
+
+    def translatePLPercepts(self, conf, st, t, co, b, sc):
+        confounded, stench, tingle, coin, bump, scream = "off", "off", "off", "off", "off", "off"
+        if conf:
+            confounded = "on"
+        if st:
+            stench = "on"
+        if t:
+            tingle = "on"
+        if co:
+            coin = "on"
+        if b:
+            bump = "on"
+        if sc:
+            scream = "on"
+        return "[" + confounded + ", " + stench + ", " + tingle + ", " + coin + ", " + bump + ", " + scream + "]"
+
+    def printPercepts(self, conf, st, t, co, b, sc):
+        confounded, stench, tingle, coin, bump, scream = "C-", "S-", "T-", "C-", "B-", "S"
+        if conf:
+            confounded = "Confounded-"
+        if st:
+            stench = "Stench-"
+        if t:
+            tingle = "Tingle-"
+        if co:
+            coin = "Coin-"
+        if b:
+            bump = "Bump-"
+        if sc:
+            scream = "Scream"
+        print(confounded + stench + tingle + coin + bump + scream)
+
     ########################################## MOVING FUNCTIONS ##################################################################
 
     def moveForward(self):
         next_cell = self.d.moveAgentForward()
-        percepts = self.d.getPercepts()
+        percepts = self.getPercepts()
         list(self.prolog.query("move(moveforward, " + str(percepts) + ")."))
         if next_cell == "empty":
             self.plam.moveForward()
-            if self.d.checkCoin() == True:
+            if self.d.checkCoin():
                 self.d.pickup()
                 self.plam.pickup()
                 percepts = self.d.getPercepts()
@@ -245,25 +294,24 @@ class Test:
     def turnRight(self):
         self.plam.turnRight()
         self.d.turnRight()
-        percepts = self.d.getPercepts()
+        percepts = self.getPercepts()
         list(self.prolog.query("move(turnright, " + str(percepts) + ")."))
 
     def turnLeft(self):
         self.plam.turnLeft()
         self.d.turnLeft()
-        percepts = self.d.getPercepts()
+        percepts = self.getPercepts()
         list(self.prolog.query("move(turnleft, " + str(percepts) + ")."))
 
     def shoot(self):
         self.d.agentShoot()
-        percepts = self.d.getPercepts()
+        percepts = self.getPercepts()
         list(self.prolog.query("move(shoot, " + str(percepts) + ")."))
 
     ########################################## MAPPING FUNCTIONS ##################################################################
 
     def printMap(self):
         self.updateCells()
-        self.d.printWorld()
         self.plam.printMap()
 
     def updateCells(self):
