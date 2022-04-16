@@ -61,7 +61,7 @@ class Cell:
     def printCell4_6(self):
         if self.wall:
             print("#", end=" ")
-        elif self.agent:
+        elif self.agent or self.wumpus or self.portal:
             print("-", end=" ")
         else:
             print(" ", end=" ")
