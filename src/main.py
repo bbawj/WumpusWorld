@@ -12,4 +12,4 @@ env1_actions = ['moveforward','moveforward','moveforward',
 #t.env1_test3_PortalReset(actions = env1_actions, arrow=True)
 #t.env1_test4_explore()
 #t.env1_test5_GameReset(actions = env1_actions, arrow=True)
-#t.randomExplore()
+t.randomExplore()
