@@ -183,7 +183,6 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 | . . . | . . . | . . . | . . . | . . . | 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 				 Expected 	Actual
-Certain Wumpus at (1,1): 	 True 		True
 Wumpus at (-1,1): 		 False 		False
 Tingle at (0,3): 		 True 		True
 Portal at (1,1): 		 True 		True
@@ -282,7 +281,6 @@ Pew pew shoot arrow pew pew
 C-S-Tingle-C-B-S
 Before portal reset:
 				 Expected 	Actual
-Certain Wumpus at (1,1): 	 True 		True
 Wumpus at (-1,1): 		 False 		False
 Tingle at (0,3): 		 True 		True
 Portal at (1,1): 		 True 		True
@@ -303,7 +301,6 @@ _ _ _ _ _ _ _ _ _ _ _ _
 _ _ _ _ _ _ _ _ _ _ _ _ 
 After game reset:
 				 Expected 	 Actual
-Certain Wumpus at (1,1): 	 False 		 False
 Wumpus at (-1,1): 		 False 		 False
 Tingle at (0,3): 		 False 		 False
 Portal at (1,1): 		 False 		 False
@@ -1103,7 +1100,6 @@ Pew pew shoot arrow pew pew
 C-S-Tingle-C-B-S
 Before portal reset:
 				 Expected 	Actual
-Certain Wumpus at (1,1): 	 True 		True
 Wumpus at (-1,1): 		 False 		False
 Tingle at (0,3): 		 True 		True
 Portal at (1,1): 		 True 		True
@@ -1126,7 +1122,6 @@ _ _ _ _ _ _ _ _ _ _ _ _
 _ _ _ _ _ _ _ _ _ _ _ _ 
 After game reset:
 				 Expected 	 Actual
-Certain Wumpus at (1,1): 	 False 		 False
 Wumpus at (-1,1): 		 False 		 False
 Tingle at (0,3): 		 False 		 False
 Portal at (1,1): 		 False 		 False

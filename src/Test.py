@@ -44,10 +44,9 @@ class Test:
             self.executeAction(action)
         self.printMap()
 
-        certainWumpus, wumpus, tingleSensed, portalInferred = self.env1_sensoryCheck()
+        wumpus, tingleSensed, portalInferred = self.env1_sensoryCheck()
 
         print("\t\t\t\t Expected \tActual")
-        print("Certain Wumpus at (1,1): \t True \t\t" + certainWumpus)
         print("Wumpus at (-1,1): \t\t False \t\t" + wumpus)
         print("Tingle at (0,3): \t\t True \t\t" + tingleSensed)
         print("Portal at (1,1): \t\t True \t\t" + portalInferred)
@@ -68,11 +67,10 @@ class Test:
 
         has_arrow = self.arrowCheck()
 
-        certainWumpus, wumpus, tingleSensed, portalInferred = self.env1_sensoryCheck()
+        wumpus, tingleSensed, portalInferred = self.env1_sensoryCheck()
 
         print("Before portal reset:")
         print("\t\t\t\t Expected \tActual")
-        print("Certain Wumpus at (1,1): \t True \t\t" + certainWumpus)
         print("Wumpus at (-1,1): \t\t False \t\t" + wumpus)
         print("Tingle at (0,3): \t\t True \t\t" + tingleSensed)
         print("Portal at (1,1): \t\t True \t\t" + portalInferred)
@@ -81,11 +79,10 @@ class Test:
         self.portalReset()
         self.printMap()
         has_arrow = self.arrowCheck()
-        certainWumpus, wumpus, tingleSensed, portalInferred = self.env1_sensoryCheck()
+        wumpus, tingleSensed, portalInferred = self.env1_sensoryCheck()
 
         print("After game reset:")
         print("\t\t\t\t Expected \t Actual")
-        print("Certain Wumpus at (1,1): \t False \t\t " + certainWumpus)
         print("Wumpus at (-1,1): \t\t False \t\t " + wumpus)
         print("Tingle at (0,3): \t\t False \t\t " + tingleSensed)
         print("Portal at (1,1): \t\t False \t\t " + portalInferred)
@@ -122,11 +119,10 @@ class Test:
 
         has_arrow = self.arrowCheck()
 
-        certainWumpus, wumpus, tingleSensed, portalInferred = self.env1_sensoryCheck()
+        wumpus, tingleSensed, portalInferred = self.env1_sensoryCheck()
 
         print("Before portal reset:")
         print("\t\t\t\t Expected \tActual")
-        print("Certain Wumpus at (1,1): \t True \t\t" + certainWumpus)
         print("Wumpus at (-1,1): \t\t False \t\t" + wumpus)
         print("Tingle at (0,3): \t\t True \t\t" + tingleSensed)
         print("Portal at (1,1): \t\t True \t\t" + portalInferred)
@@ -136,11 +132,10 @@ class Test:
 
         self.printMap()
         has_arrow = self.arrowCheck()
-        certainWumpus, wumpus, tingleSensed, portalInferred = self.env1_sensoryCheck()
+        wumpus, tingleSensed, portalInferred = self.env1_sensoryCheck()
 
         print("After game reset:")
         print("\t\t\t\t Expected \t Actual")
-        print("Certain Wumpus at (1,1): \t False \t\t " + certainWumpus)
         print("Wumpus at (-1,1): \t\t False \t\t " + wumpus)
         print("Tingle at (0,3): \t\t False \t\t " + tingleSensed)
         print("Portal at (1,1): \t\t False \t\t " + portalInferred)
@@ -150,13 +145,10 @@ class Test:
 
     def env1_sensoryCheck(self):
 
-        certainWumpus = "True"
         wumpus = "True"
         tingleSensed = "True"
         portalInferred = "True"
 
-        if len(list(self.prolog.query("certainWumpus(1,1)."))) == 0:
-            certainWumpus = "False"
         if len(list(self.prolog.query("wumpus(-1,1)."))) == 0:
             wumpus = "False"
         if len(list(self.prolog.query("tingle(0,3)."))) == 0:
@@ -164,7 +156,7 @@ class Test:
         if len(list(self.prolog.query("confundus(0,4)."))) == 0:
             portalInferred = "False"
 
-        return certainWumpus, wumpus, tingleSensed, portalInferred
+        return wumpus, tingleSensed, portalInferred
 
     ########################################## UTIL FUNCTIONS ##################################################################
 
