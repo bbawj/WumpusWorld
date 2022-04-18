@@ -374,7 +374,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 | # # # | # # # | # # # | # # # | # # # | # # # | # # # | 
 | # # # | # # # | # # # | # # # | # # # | # # # | # # # | 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-[['turnleft', 'turnleft', 'moveforward']]
+['turnleft', 'turnleft', 'moveforward']
 C-S-T-C-B-S
 C-S-T-C-B-S
 C-Stench-T-C-B-S
@@ -399,7 +399,7 @@ _ _ _ _ _ _ _ _ _ _ _ _
 |   ?   | - W - |   ?   | 
 | . . . | . . . | . . . | 
 _ _ _ _ _ _ _ _ _ _ _ _ 
-[['turnleft', 'turnleft', 'moveforward'], ['moveforward']]
+['turnleft', 'turnleft', 'moveforward', 'moveforward']
 C-Stench-T-C-B-S
 C-Stench-T-C-B-S
 C-S-T-C-B-S
@@ -426,7 +426,7 @@ _ _ _ _ _ _ _ _ _ _ _ _
 |   ?   | - W - |   ?   | 
 | . . . | . . . | . . . | 
 _ _ _ _ _ _ _ _ _ _ _ _ 
-[['turnright', 'moveforward']]
+['turnright', 'moveforward']
 C-S-T-C-B-S
 C-S-T-C-B-S
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
@@ -450,7 +450,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 |   ?   |   ?   | - W - |   ?   |   ?   | 
 | . . . | . . . | . . . | . . . | . . . | 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-[['turnright', 'moveforward']]
+['turnright', 'moveforward']
 C-S-T-C-B-S
 C-S-Tingle-C-B-S
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
@@ -474,7 +474,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 |   ?   |   ?   | - W - | - O - |   ?   | 
 | . . . | . . . | . . . | . . . | . . . | 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-[['turnleft', 'turnleft', 'moveforward'], ['moveforward']]
+['turnleft', 'turnleft', 'moveforward', 'moveforward']
 C-S-Tingle-C-B-S
 C-S-Tingle-C-B-S
 C-S-T-C-B-S
@@ -500,7 +500,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 |   ?   |   ?   | - W - | - O - |   ?   | 
 | . . . | . . . | . . . | . . . | . . . | 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-[['moveforward']]
+['moveforward']
 You bumped into a wall!
 C-S-T-C-Bump-S
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
@@ -524,7 +524,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 |   ?   |   ?   | - W - | - O - |   ?   | 
 | . . . | . . . | . . . | . . . | . . . | 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-[['turnright', 'moveforward']]
+['turnright', 'moveforward']
 C-S-T-C-B-S
 C-S-T-C-B-S
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
@@ -548,7 +548,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 |   ?   |   ?   |   ?   | - W - | - O - |   ?   |   ?   | 
 | . . . | . . . | . . . | . . . | . . . | . . . | . . . | 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-[['turnright', 'moveforward']]
+['turnright', 'moveforward']
 C-S-T-C-B-S
 You bumped into a wall!
 C-S-T-C-Bump-S
@@ -573,7 +573,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 |   ?   |   ?   |   ?   | - W - | - O - |   ?   |   ?   | 
 | . . . | . . . | . . . | . . . | . . . | . . . | . . . | 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-[['turnleft', 'turnleft', 'moveforward']]
+['turnleft', 'turnleft', 'moveforward']
 C-S-T-C-B-S
 C-S-T-C-B-S
 You bumped into a wall!
@@ -599,7 +599,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 |   ?   |   ?   |   ?   | - W - | - O - |   ?   |   ?   | 
 | . . . | . . . | . . . | . . . | . . . | . . . | . . . | 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-[['turnright', 'moveforward']]
+['turnright', 'moveforward']
 C-S-T-C-B-S
 You bumped into a wall!
 C-S-T-C-Bump-S
@@ -624,7 +624,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 |   ?   |   ?   |   ?   | - W - | - O - |   ?   |   ?   | 
 | . . . | . . . | . . . | . . . | . . . | . . . | . . . | 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-[['turnleft', 'turnleft', 'moveforward'], ['turnleft', 'moveforward'], ['turnright', 'moveforward'], ['moveforward']]
+['turnleft', 'turnleft', 'moveforward', 'turnleft', 'moveforward', 'turnright', 'moveforward', 'moveforward']
 C-S-T-C-B-S
 C-S-T-C-B-S
 C-S-T-C-B-S
@@ -654,7 +654,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 |   ?   |   ?   |   ?   | - W - | - O - |   ?   |   ?   | 
 | . . . | . . . | . . . | . . . | . . . | . . . | . . . | 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-[['turnleft', 'moveforward']]
+['turnleft', 'moveforward']
 C-S-Tingle-C-B-S
 C-S-Tingle-C-B-S
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
@@ -678,7 +678,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 |   ?   |   ?   | - O - | - W - | - O - |   ?   |   ?   | 
 | . . . | . . . | . . . | . . . | . . . | . . . | . . . | 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-[['turnleft', 'moveforward'], ['turnright', 'shoot']]
+['turnleft', 'moveforward', 'turnright', 'shoot']
 C-S-Tingle-C-B-S
 C-Stench-T-C-B-S
 C-Stench-T-C-B-S
@@ -706,7 +706,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 |   ?   |   ?   | - O - |   s   | - O - |   ?   |   ?   | 
 | . . . | . . . | . . . | . . . | . . . | . . . | . . . | 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-[['moveforward']]
+['moveforward']
 C-S-T-C-B-S
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 | . . . | . . . | . . . | . . . | . . . | . . . | . . . | 
@@ -737,7 +737,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 |   ?   |   ?   |   ?   |   s   |   ?   |   ?   |   ?   | 
 | . . . | . . . | . . . | . . . | . . . | . . . | . . . | 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-[['moveforward']]
+['moveforward']
 You bumped into a wall!
 C-S-T-C-Bump-S
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
@@ -769,7 +769,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 |   ?   |   ?   |   ?   | # # # |   ?   |   ?   |   ?   | 
 | . . . | . . . | . . . | # # # | . . . | . . . | . . . | 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-[['turnleft', 'moveforward']]
+['turnleft', 'moveforward']
 C-S-T-C-B-S
 C-S-T-C-B-S
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
@@ -801,7 +801,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 |   ?   |   ?   |   ?   | # # # |   s   |   ?   |   ?   | 
 | . . . | . . . | . . . | # # # | . . . | . . . | . . . | 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-[['turnright', 'moveforward']]
+['turnright', 'moveforward']
 C-S-T-C-B-S
 You bumped into a wall!
 C-S-T-C-Bump-S
@@ -834,7 +834,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 |   ?   |   ?   |   ?   | # # # | # # # |   ?   |   ?   | 
 | . . . | . . . | . . . | # # # | # # # | . . . | . . . | 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-[['turnleft', 'moveforward']]
+['turnleft', 'moveforward']
 C-S-T-C-B-S
 C-S-Tingle-C-B-S
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
@@ -866,7 +866,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 |   ?   |   ?   |   ?   | # # # | # # # | - O - |   ?   | 
 | . . . | . . . | . . . | # # # | # # # | . . . | . . . | 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-[['turnleft', 'turnleft', 'moveforward'], ['moveforward'], ['moveforward']]
+['turnleft', 'turnleft', 'moveforward', 'moveforward', 'moveforward']
 C-S-Tingle-C-B-S
 C-S-Tingle-C-B-S
 C-S-T-C-B-S
@@ -901,7 +901,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 |   ?   |   ?   |   s   | # # # | # # # | - O - |   ?   | 
 | . . . | . . . | . . . | # # # | # # # | . . . | . . . | 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-[['turnleft', 'moveforward']]
+['turnleft', 'moveforward']
 C-S-T-C-B-S
 You bumped into a wall!
 C-S-T-C-Bump-S
@@ -934,7 +934,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 |   ?   |   ?   | # # # | # # # | # # # | - O - |   ?   | 
 | . . . | . . . | # # # | # # # | # # # | . . . | . . . | 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-[['turnright', 'moveforward']]
+['turnright', 'moveforward']
 C-S-T-C-B-S
 C-S-Tingle-C-B-S
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
@@ -966,7 +966,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 |   ?   | - O - | # # # | # # # | # # # | - O - |   ?   | 
 | . . . | . . . | # # # | # # # | # # # | . . . | . . . | 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-[['turnleft', 'turnleft', 'moveforward'], ['turnleft', 'moveforward'], ['moveforward'], ['turnright', 'moveforward']]
+['turnleft', 'turnleft', 'moveforward', 'turnleft', 'moveforward', 'moveforward', 'turnright', 'moveforward']
 C-S-Tingle-C-B-S
 C-S-Tingle-C-B-S
 C-S-T-C-B-S
