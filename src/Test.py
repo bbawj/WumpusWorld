@@ -1,4 +1,3 @@
-import PLAgentMap
 import Agent
 import PLAgentMap
 import Driver
@@ -26,7 +25,10 @@ class Test:
         self.play()
 
     def env1_test1_localMapping(self, actions):
+        self.initRest()
         self.d.buildTestEnv(direction=3)
+        self.d.printWorld()
+        self.printMap()
         for action in actions:
             self.executeAction(action)
         self.printMap()
@@ -34,23 +36,26 @@ class Test:
         self.printAgentLoc(expected_loc="r(-1, 2)", expected_dir="reast")
 
     def env1_test2_SensoryInteference(self, actions):
-
+        self.initRest()
         self.d.buildTestEnv(direction=3)
+        self.d.printWorld()
+        self.printMap()
         for action in actions:
             self.executeAction(action)
         self.printMap()
 
-        certainWumpus, wumpus, tingleSensed, portalInferred = self.env1_sensoryCheck()
+        wumpus, tingleSensed, portalInferred = self.env1_sensoryCheck()
 
         print("\t\t\t\t Expected \tActual")
-        print("Certain Wumpus at (1,1): \t True \t\t" + certainWumpus)
         print("Wumpus at (-1,1): \t\t False \t\t" + wumpus)
         print("Tingle at (0,3): \t\t True \t\t" + tingleSensed)
         print("Portal at (1,1): \t\t True \t\t" + portalInferred)
 
     def env1_test3_PortalReset(self, actions, arrow):
-
+        self.initRest()
         self.d.buildTestEnv(direction=3)
+        self.d.printWorld()
+        self.printMap()
         for action in actions:
             self.executeAction(action)
         self.printMap()
@@ -62,11 +67,10 @@ class Test:
 
         has_arrow = self.arrowCheck()
 
-        certainWumpus, wumpus, tingleSensed, portalInferred = self.env1_sensoryCheck()
+        wumpus, tingleSensed, portalInferred = self.env1_sensoryCheck()
 
         print("Before portal reset:")
         print("\t\t\t\t Expected \tActual")
-        print("Certain Wumpus at (1,1): \t True \t\t" + certainWumpus)
         print("Wumpus at (-1,1): \t\t False \t\t" + wumpus)
         print("Tingle at (0,3): \t\t True \t\t" + tingleSensed)
         print("Portal at (1,1): \t\t True \t\t" + portalInferred)
@@ -75,11 +79,10 @@ class Test:
         self.portalReset()
         self.printMap()
         has_arrow = self.arrowCheck()
-        certainWumpus, wumpus, tingleSensed, portalInferred = self.env1_sensoryCheck()
+        wumpus, tingleSensed, portalInferred = self.env1_sensoryCheck()
 
         print("After game reset:")
         print("\t\t\t\t Expected \t Actual")
-        print("Certain Wumpus at (1,1): \t False \t\t " + certainWumpus)
         print("Wumpus at (-1,1): \t\t False \t\t " + wumpus)
         print("Tingle at (0,3): \t\t False \t\t " + tingleSensed)
         print("Portal at (1,1): \t\t False \t\t " + portalInferred)
@@ -88,6 +91,7 @@ class Test:
         self.printAgentLoc(expected_loc="r(0, 0)", expected_dir="rnorth")
 
     def env1_test4_explore(self):
+        self.initRest()
         self.d.buildTestEnv(columns=7, rows=6, num_coins=1, num_wumpus=1, num_portals=3, num_walls=3,
                             wall_loc=[(1, 2), (1, 3), (2, 5)],
                             wumpus_loc=(4, 3),
@@ -95,11 +99,15 @@ class Test:
                             coin_loc=[(1, 1)],
                             agent_loc=(2, 3),
                             direction=0)
+        self.d.printWorld()
+        self.printMap()
         self.play()
 
     def env1_test5_GameReset(self, actions, arrow):
-
+        self.initRest()
         self.d.buildTestEnv(direction=3)
+        self.d.printWorld()
+        self.printMap()
         for action in actions:
             self.executeAction(action)
         self.printMap()
@@ -111,11 +119,10 @@ class Test:
 
         has_arrow = self.arrowCheck()
 
-        certainWumpus, wumpus, tingleSensed, portalInferred = self.env1_sensoryCheck()
+        wumpus, tingleSensed, portalInferred = self.env1_sensoryCheck()
 
         print("Before portal reset:")
         print("\t\t\t\t Expected \tActual")
-        print("Certain Wumpus at (1,1): \t True \t\t" + certainWumpus)
         print("Wumpus at (-1,1): \t\t False \t\t" + wumpus)
         print("Tingle at (0,3): \t\t True \t\t" + tingleSensed)
         print("Portal at (1,1): \t\t True \t\t" + portalInferred)
@@ -125,11 +132,10 @@ class Test:
 
         self.printMap()
         has_arrow = self.arrowCheck()
-        certainWumpus, wumpus, tingleSensed, portalInferred = self.env1_sensoryCheck()
+        wumpus, tingleSensed, portalInferred = self.env1_sensoryCheck()
 
         print("After game reset:")
         print("\t\t\t\t Expected \t Actual")
-        print("Certain Wumpus at (1,1): \t False \t\t " + certainWumpus)
         print("Wumpus at (-1,1): \t\t False \t\t " + wumpus)
         print("Tingle at (0,3): \t\t False \t\t " + tingleSensed)
         print("Portal at (1,1): \t\t False \t\t " + portalInferred)
@@ -139,13 +145,10 @@ class Test:
 
     def env1_sensoryCheck(self):
 
-        certainWumpus = "True"
         wumpus = "True"
         tingleSensed = "True"
         portalInferred = "True"
 
-        if len(list(self.prolog.query("certainWumpus(1,1)."))) == 0:
-            certainWumpus = "False"
         if len(list(self.prolog.query("wumpus(-1,1)."))) == 0:
             wumpus = "False"
         if len(list(self.prolog.query("tingle(0,3)."))) == 0:
@@ -153,7 +156,7 @@ class Test:
         if len(list(self.prolog.query("confundus(0,4)."))) == 0:
             portalInferred = "False"
 
-        return certainWumpus, wumpus, tingleSensed, portalInferred
+        return wumpus, tingleSensed, portalInferred
 
     ########################################## UTIL FUNCTIONS ##################################################################
 
@@ -173,7 +176,7 @@ class Test:
 
     def portalReset(self):
         print("Simulating portal reset...")
-        list(self.prolog.query("reposition."))
+        list(self.prolog.query("reposition([on,off,off,off,off,off])."))
         self.plam.resetMap()
 
     def gameReset(self):
@@ -183,10 +186,11 @@ class Test:
         list(self.prolog.query("reborn."))
 
     def printAgentLoc(self, expected_loc, expected_dir):
-        agent_rel_loc = list(self.prolog.query("current(X,Y)."))
-        coords = agent_rel_loc[0]['X']
-        rel_dir = agent_rel_loc[0]['Y']
-        print("Agent relative location: \t " + expected_loc + " \t", coords)
+        agent_rel_loc = list(self.prolog.query("current(X,Y,D)."))
+        x = agent_rel_loc[0]['X']
+        y = agent_rel_loc[0]['Y']
+        rel_dir = agent_rel_loc[0]['D']
+        print("Agent relative location: \t " + expected_loc + " \t", (x, y))
         print("Agent relative direction: \t " + expected_dir + "\t\t", rel_dir)
 
     def executeMoves(self, moveList):
@@ -212,7 +216,7 @@ class Test:
             return moveList
 
     def play(self):
-        self.printMap()
+        self.d.printWorld()
         moveList = self.getNextMoves()
         while (moveList):
             print(moveList)
@@ -221,15 +225,53 @@ class Test:
             moveList = self.getNextMoves()
         print("No more moves!")
 
+    def getPercepts(self):
+        conf, st, t, co, b, sc = self.d.getPercepts()
+        percepts = self.translatePLPercepts(conf, st, t, co, b, sc)
+        self.printPercepts(conf, st, t, co, b, sc)
+        return percepts
+
+    def translatePLPercepts(self, conf, st, t, co, b, sc):
+        confounded, stench, tingle, coin, bump, scream = "off", "off", "off", "off", "off", "off"
+        if conf:
+            confounded = "on"
+        if st:
+            stench = "on"
+        if t:
+            tingle = "on"
+        if co:
+            coin = "on"
+        if b:
+            bump = "on"
+        if sc:
+            scream = "on"
+        return "[" + confounded + ", " + stench + ", " + tingle + ", " + coin + ", " + bump + ", " + scream + "]"
+
+    def printPercepts(self, conf, st, t, co, b, sc):
+        confounded, stench, tingle, coin, bump, scream = "C-", "S-", "T-", "C-", "B-", "S"
+        if conf:
+            confounded = "Confounded-"
+        if st:
+            stench = "Stench-"
+        if t:
+            tingle = "Tingle-"
+        if co:
+            coin = "Coin-"
+        if b:
+            bump = "Bump-"
+        if sc:
+            scream = "Scream"
+        print(confounded + stench + tingle + coin + bump + scream)
+
     ########################################## MOVING FUNCTIONS ##################################################################
 
     def moveForward(self):
         next_cell = self.d.moveAgentForward()
-        percepts = self.d.getPercepts()
+        percepts = self.getPercepts()
         list(self.prolog.query("move(moveforward, " + str(percepts) + ")."))
         if next_cell == "empty":
             self.plam.moveForward()
-            if self.d.checkCoin() == True:
+            if self.d.checkCoin():
                 self.d.pickup()
                 self.plam.pickup()
                 percepts = self.d.getPercepts()
@@ -237,7 +279,7 @@ class Test:
 
         if next_cell == "portal":
             self.plam.resetMap()
-            list(self.prolog.query("reposition."))
+            list(self.prolog.query("reposition([on,off,off,off,off,off)."))
         if next_cell == "wumpus":
             self.plam.resetMap()
             list(self.prolog.query("reborn."))
@@ -245,25 +287,24 @@ class Test:
     def turnRight(self):
         self.plam.turnRight()
         self.d.turnRight()
-        percepts = self.d.getPercepts()
+        percepts = self.getPercepts()
         list(self.prolog.query("move(turnright, " + str(percepts) + ")."))
 
     def turnLeft(self):
         self.plam.turnLeft()
         self.d.turnLeft()
-        percepts = self.d.getPercepts()
+        percepts = self.getPercepts()
         list(self.prolog.query("move(turnleft, " + str(percepts) + ")."))
 
     def shoot(self):
         self.d.agentShoot()
-        percepts = self.d.getPercepts()
+        percepts = self.getPercepts()
         list(self.prolog.query("move(shoot, " + str(percepts) + ")."))
 
     ########################################## MAPPING FUNCTIONS ##################################################################
 
     def printMap(self):
         self.updateCells()
-        self.d.printWorld()
         self.plam.printMap()
 
     def updateCells(self):

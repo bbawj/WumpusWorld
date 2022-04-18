@@ -33,7 +33,7 @@ class Cell:
     # Confounded Indicator
     def printCell1(self):
         if self.wall:
-            print("w", end=" ")
+            print("#", end=" ")
         elif self.confounded:
             print("%", end=" ")
         else:
@@ -42,7 +42,7 @@ class Cell:
     # Stench Indicator
     def printCell2(self):
         if self.wall:
-            print("w", end=" ")
+            print("#", end=" ")
         elif self.stench:
             print("=", end=" ")
         else:
@@ -51,7 +51,7 @@ class Cell:
     # Tingle Indicator
     def printCell3(self):
         if self.wall:
-            print("w", end=" ")
+            print("#", end=" ")
         elif self.tingle:
             print("T", end=" ")
         else:
@@ -60,16 +60,18 @@ class Cell:
     # Agent Indicator
     def printCell4_6(self):
         if self.wall:
-            print("w", end=" ")
-        elif self.agent:
+            print("#", end=" ")
+        elif self.agent or self.wumpus or self.portal:
             print("-", end=" ")
         else:
-            print(".", end=" ")
+            print(" ", end=" ")
 
     # Wumpus/Portal/Direction/Safety Indicator
     def printCell5(self):
         if self.wall:
-            print("w", end=" ")
+            print("#", end=" ")
+        elif self.wumpus and self.portal:
+            print("U", end=" ")
         elif self.wumpus:
             print("W", end=" ")
         elif self.portal:
@@ -87,7 +89,7 @@ class Cell:
     # Glitter Indicator
     def printCell7(self):
         if self.wall:
-            print("w", end=" ")
+            print("#", end=" ")
         elif self.coin:
             print("*", end=" ")
         else:
@@ -96,7 +98,7 @@ class Cell:
     # Bump Indicator
     def printCell8(self):
         if self.wall:
-            print("w", end=" ")
+            print("#", end=" ")
         elif self.bump:
             print("B", end=" ")
         else:
@@ -105,14 +107,14 @@ class Cell:
     # Bump Indicator
     def printCell9(self):
         if self.wall:
-            print("w", end=" ")
+            print("#", end=" ")
         elif self.scream:
             print("@", end=" ")
         else:
             print(".", end=" ")
 
     def printDirection(self):
-        direction_mapping = {0: "∧", 1: ">", 2: "∨", 3: "<"}
+        direction_mapping = {0: "^", 1: ">", 2: "v", 3: "<"}
         print(direction_mapping[self.direction], end=" ")
 
     def copyCell(self, cell):
@@ -126,17 +128,4 @@ class Cell:
         self.empty = cell.empty
 
     def getPLPercept(self):
-        confounded, stench, tingle, coin, bump, scream = "no","no","no","no","no","no"
-        if self.confounded:
-            confounded = "yes"
-        if self.stench:
-            stench = "yes"
-        if self.tingle:
-            tingle = "yes"
-        if self.coin:
-            coin = "yes"
-        if self.bump:
-            bump = "yes"
-        if self.scream:
-            scream = "yes"
-        return "[" + confounded + ", " + stench + ", " + tingle + ", " + coin + ", " + bump + ", " + scream + "]"
+        return self.confounded, self.stench, self.tingle, self.confounded, self.bump, self.scream
