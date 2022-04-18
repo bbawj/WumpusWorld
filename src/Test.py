@@ -194,18 +194,17 @@ class Test:
         print("Agent relative direction: \t " + expected_dir + "\t\t", rel_dir)
 
     def executeMoves(self, moveList):
-        for move in moveList:
-            for action in move:
-                if action == "turnright":
-                    self.turnRight()
-                elif action == "turnleft":
-                    self.turnLeft()
-                elif action == "moveforward":
-                    self.moveForward()
-                elif action == "pickup":
-                    self.pickUp()
-                elif action == "shoot":
-                    self.shoot()
+        for action in moveList:
+            if action == "turnright":
+                self.turnRight()
+            elif action == "turnleft":
+                self.turnLeft()
+            elif action == "moveforward":
+                self.moveForward()
+            elif action == "pickup":
+                self.pickUp()
+            elif action == "shoot":
+                self.shoot()
 
     def getNextMoves(self):
         soln = list(self.prolog.query("explore(L)."))

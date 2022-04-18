@@ -3,7 +3,7 @@ import sys
 
 ### UPDATE FILE NAMES BELOW ###
 file_name = "StopMug-testPrintout-Self-Self.txt"
-agent_name = "Agent.pl"
+agent_name = "StopMug-Agent.pl"
 ###############################
 
 stdoutOrigin = sys.stdout

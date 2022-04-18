@@ -307,18 +307,6 @@ getRoomFromMove(r(X,Y), D, A, N) :-
   YD is Y-1,
   YU is Y+1,
   (
-    (A=[turnleft, moveforward], D=rnorth) -> N=r(XL,Y) ;
-    (A=[turnleft, moveforward], D=reast) -> N=r(X,YU) ;
-    (A=[turnleft, moveforward], D=rwest) -> N=r(X,YD) ;
-    (A=[turnleft, moveforward, D=rsouth]) -> N=r(XR,Y) ;
-    (A=[turnleft, turnleft, moveforward], D=rnorth) -> N=r(X,YD) ;
-    (A=[turnleft, turnleft, moveforward], D=reast) -> N=r(XL, Y) ;
-    (A=[turnleft, turnleft, moveforward], D=rwest) -> N=r(XR,Y) ;
-    (A=[turnleft, turnleft, moveforward], D=rsouth) -> N=r(X,YU) ;
-    (A=[turnright, moveforward], D=rnorth) -> N=r(XR,Y) ;
-    (A=[turnright, moveforward], D=reast) -> N=r(X,YD) ;
-    (A=[turnright, moveforward], D=rwest) -> N=r(X,YU) ;
-    (A=[turnright, moveforward], D=rsouth) -> N=r(XL,Y) ;
     (A=[moveforward], D=rnorth) -> N=r(X,YU) ;
     (A=[moveforward], D=reast) -> N=r(XR,Y) ;
     (A=[moveforward], D=rwest) -> N=r(XL,Y) ;
@@ -403,22 +391,22 @@ convertPathToMoves(L, _, UpdatedMoves, FinalMoves) :-
 convertPathToMoves([r(X,Y)|T], CurrentDirection, Moves, FinalMoves) :-
   getFirstElement(T, r(X1, Y1)),
   (
-    (1 is X1-X, CurrentDirection=rnorth) -> (append(Moves, [[turnright, moveforward]], UpdatedMoves), ND=reast) ;
-    (1 is X1-X, CurrentDirection=rsouth) -> (append(Moves, [[turnleft, moveforward]], UpdatedMoves), ND=reast) ;
-    (1 is X1-X, CurrentDirection=reast) -> (append(Moves,[[moveforward]], UpdatedMoves) , ND=reast);
-    (1 is X1-X, CurrentDirection=rwest) -> (append(Moves,[[turnleft, turnleft, moveforward]], UpdatedMoves), ND=reast) ;
-    (1 is X-X1, CurrentDirection=rnorth) -> (append(Moves,[[turnleft, moveforward]], UpdatedMoves), ND=rwest) ;
-    (1 is X-X1, CurrentDirection=rsouth) -> (append(Moves,[[turnright, moveforward]], UpdatedMoves), ND=rwest) ;
-    (1 is X-X1, CurrentDirection=reast) -> (append(Moves,[[turnleft, turnleft, moveforward]], UpdatedMoves), ND=rwest) ;
-    (1 is X-X1, CurrentDirection=rwest) -> (append(Moves,[[moveforward]], UpdatedMoves), ND=rwest);
-    (1 is Y-Y1, CurrentDirection=rnorth) -> (append(Moves,[[turnleft, turnleft, moveforward]], UpdatedMoves), ND=rsouth) ;
-    (1 is Y-Y1, CurrentDirection=rsouth) -> (append(Moves,[[moveforward]], UpdatedMoves), ND=rsouth) ;
-    (1 is Y-Y1, CurrentDirection=reast) -> (append(Moves,[[turnright, moveforward]], UpdatedMoves), ND=rsouth) ;
-    (1 is Y-Y1, CurrentDirection=rwest) -> (append(Moves,[[turnleft, moveforward]], UpdatedMoves), ND=rsouth) ;
-    (1 is Y1-Y, CurrentDirection=rnorth) -> (append(Moves,[[moveforward]], UpdatedMoves), ND=rnorth) ;
-    (1 is Y1-Y, CurrentDirection=rsouth) -> (append(Moves,[[turnleft, turnleft, moveforward]], UpdatedMoves), ND=rnorth) ;
-    (1 is Y1-Y, CurrentDirection=reast) -> (append(Moves,[[turnleft, moveforward]], UpdatedMoves), ND=rnorth) ;
-    (1 is Y1-Y, CurrentDirection=rwest) -> (append(Moves,[[turnright, moveforward]], UpdatedMoves), ND=rnorth)
+    (1 is X1-X, CurrentDirection=rnorth) -> (append(Moves, [turnright, moveforward], UpdatedMoves), ND=reast) ;
+    (1 is X1-X, CurrentDirection=rsouth) -> (append(Moves, [turnleft, moveforward], UpdatedMoves), ND=reast) ;
+    (1 is X1-X, CurrentDirection=reast) -> (append(Moves,[moveforward], UpdatedMoves) , ND=reast);
+    (1 is X1-X, CurrentDirection=rwest) -> (append(Moves,[turnleft, turnleft, moveforward], UpdatedMoves), ND=reast) ;
+    (1 is X-X1, CurrentDirection=rnorth) -> (append(Moves,[turnleft, moveforward], UpdatedMoves), ND=rwest) ;
+    (1 is X-X1, CurrentDirection=rsouth) -> (append(Moves,[turnright, moveforward], UpdatedMoves), ND=rwest) ;
+    (1 is X-X1, CurrentDirection=reast) -> (append(Moves,[turnleft, turnleft, moveforward], UpdatedMoves), ND=rwest) ;
+    (1 is X-X1, CurrentDirection=rwest) -> (append(Moves,[moveforward], UpdatedMoves), ND=rwest);
+    (1 is Y-Y1, CurrentDirection=rnorth) -> (append(Moves,[turnleft, turnleft, moveforward], UpdatedMoves), ND=rsouth) ;
+    (1 is Y-Y1, CurrentDirection=rsouth) -> (append(Moves,[moveforward], UpdatedMoves), ND=rsouth) ;
+    (1 is Y-Y1, CurrentDirection=reast) -> (append(Moves,[turnright, moveforward], UpdatedMoves), ND=rsouth) ;
+    (1 is Y-Y1, CurrentDirection=rwest) -> (append(Moves,[turnleft, moveforward], UpdatedMoves), ND=rsouth) ;
+    (1 is Y1-Y, CurrentDirection=rnorth) -> (append(Moves,[moveforward], UpdatedMoves), ND=rnorth) ;
+    (1 is Y1-Y, CurrentDirection=rsouth) -> (append(Moves,[turnleft, turnleft, moveforward], UpdatedMoves), ND=rnorth) ;
+    (1 is Y1-Y, CurrentDirection=reast) -> (append(Moves,[turnleft, moveforward], UpdatedMoves), ND=rnorth) ;
+    (1 is Y1-Y, CurrentDirection=rwest) -> (append(Moves,[turnright, moveforward], UpdatedMoves), ND=rnorth)
   ),
   convertPathToMoves(T, ND, UpdatedMoves, FinalMoves).
 
@@ -426,44 +414,44 @@ convertPathToShoot([r(X,Y)|T], CurrentDirection, Moves, FinalMoves) :-
   length(T, 1),
   getFirstElement(T, r(X1, Y1)),
   (
-    (1 is X1-X, CurrentDirection=rnorth) -> (append(Moves, [[turnright, shoot]], UpdatedMoves), ND=reast) ;
-    (1 is X1-X, CurrentDirection=rsouth) -> (append(Moves, [[turnleft, shoot]], UpdatedMoves), ND=reast) ;
-    (1 is X1-X, CurrentDirection=reast) -> (append(Moves,[[shoot]], UpdatedMoves) , ND=reast);
-    (1 is X1-X, CurrentDirection=rwest) -> (append(Moves,[[turnleft, turnleft, shoot]], UpdatedMoves), ND=reast) ;
-    (1 is X-X1, CurrentDirection=rnorth) -> (append(Moves,[[turnleft, shoot]], UpdatedMoves), ND=rwest) ;
-    (1 is X-X1, CurrentDirection=rsouth) -> (append(Moves,[[turnright, shoot]], UpdatedMoves), ND=rwest) ;
-    (1 is X-X1, CurrentDirection=reast) -> (append(Moves,[[turnleft, turnleft, shoot]], UpdatedMoves), ND=rwest) ;
-    (1 is X-X1, CurrentDirection=rwest) -> (append(Moves,[[shoot]], UpdatedMoves), ND=rwest);
-    (1 is Y-Y1, CurrentDirection=rnorth) -> (append(Moves,[[turnleft, turnleft, shoot]], UpdatedMoves), ND=rsouth) ;
-    (1 is Y-Y1, CurrentDirection=rsouth) -> (append(Moves,[[shoot]], UpdatedMoves), ND=rsouth) ;
-    (1 is Y-Y1, CurrentDirection=reast) -> (append(Moves,[[turnright, shoot]], UpdatedMoves), ND=rsouth) ;
-    (1 is Y-Y1, CurrentDirection=rwest) -> (append(Moves,[[turnleft, shoot]], UpdatedMoves), ND=rsouth) ;
-    (1 is Y1-Y, CurrentDirection=rnorth) -> (append(Moves,[[shoot]], UpdatedMoves), ND=rnorth) ;
-    (1 is Y1-Y, CurrentDirection=rsouth) -> (append(Moves,[[turnleft, turnleft, shoot]], UpdatedMoves), ND=rnorth) ;
-    (1 is Y1-Y, CurrentDirection=reast) -> (append(Moves,[[turnleft, shoot]], UpdatedMoves), ND=rnorth) ;
-    (1 is Y1-Y, CurrentDirection=rwest) -> (append(Moves,[[turnright, shoot]], UpdatedMoves), ND=rnorth)
+    (1 is X1-X, CurrentDirection=rnorth) -> (append(Moves, [turnright, shoot], UpdatedMoves), ND=reast) ;
+    (1 is X1-X, CurrentDirection=rsouth) -> (append(Moves, [turnleft, shoot], UpdatedMoves), ND=reast) ;
+    (1 is X1-X, CurrentDirection=reast) -> (append(Moves,[shoot], UpdatedMoves) , ND=reast);
+    (1 is X1-X, CurrentDirection=rwest) -> (append(Moves,[turnleft, turnleft, shoot], UpdatedMoves), ND=reast) ;
+    (1 is X-X1, CurrentDirection=rnorth) -> (append(Moves,[turnleft, shoot], UpdatedMoves), ND=rwest) ;
+    (1 is X-X1, CurrentDirection=rsouth) -> (append(Moves,[turnright, shoot], UpdatedMoves), ND=rwest) ;
+    (1 is X-X1, CurrentDirection=reast) -> (append(Moves,[turnleft, turnleft, shoot], UpdatedMoves), ND=rwest) ;
+    (1 is X-X1, CurrentDirection=rwest) -> (append(Moves,[shoot], UpdatedMoves), ND=rwest);
+    (1 is Y-Y1, CurrentDirection=rnorth) -> (append(Moves,[turnleft, turnleft, shoot], UpdatedMoves), ND=rsouth) ;
+    (1 is Y-Y1, CurrentDirection=rsouth) -> (append(Moves,[shoot], UpdatedMoves), ND=rsouth) ;
+    (1 is Y-Y1, CurrentDirection=reast) -> (append(Moves,[turnright, shoot], UpdatedMoves), ND=rsouth) ;
+    (1 is Y-Y1, CurrentDirection=rwest) -> (append(Moves,[turnleft, shoot], UpdatedMoves), ND=rsouth) ;
+    (1 is Y1-Y, CurrentDirection=rnorth) -> (append(Moves,[shoot], UpdatedMoves), ND=rnorth) ;
+    (1 is Y1-Y, CurrentDirection=rsouth) -> (append(Moves,[turnleft, turnleft, shoot], UpdatedMoves), ND=rnorth) ;
+    (1 is Y1-Y, CurrentDirection=reast) -> (append(Moves,[turnleft, shoot], UpdatedMoves), ND=rnorth) ;
+    (1 is Y1-Y, CurrentDirection=rwest) -> (append(Moves,[turnright, shoot], UpdatedMoves), ND=rnorth)
   ), 
   FinalMoves = UpdatedMoves, !.
 
 convertPathToShoot([r(X,Y)|T], CurrentDirection, Moves, FinalMoves) :-
   getFirstElement(T, r(X1, Y1)),
   (
-    (1 is X1-X, CurrentDirection=rnorth) -> (append(Moves, [[turnright, moveforward]], UpdatedMoves), ND=reast) ;
-    (1 is X1-X, CurrentDirection=rsouth) -> (append(Moves, [[turnleft, moveforward]], UpdatedMoves), ND=reast) ;
-    (1 is X1-X, CurrentDirection=reast) -> (append(Moves,[[moveforward]], UpdatedMoves) , ND=reast);
-    (1 is X1-X, CurrentDirection=rwest) -> (append(Moves,[[turnleft, turnleft, moveforward]], UpdatedMoves), ND=reast) ;
-    (1 is X-X1, CurrentDirection=rnorth) -> (append(Moves,[[turnleft, moveforward]], UpdatedMoves), ND=rwest) ;
-    (1 is X-X1, CurrentDirection=rsouth) -> (append(Moves,[[turnright, moveforward]], UpdatedMoves), ND=rwest) ;
-    (1 is X-X1, CurrentDirection=reast) -> (append(Moves,[[turnleft, turnleft, moveforward]], UpdatedMoves), ND=rwest) ;
-    (1 is X-X1, CurrentDirection=rwest) -> (append(Moves,[[moveforward]], UpdatedMoves), ND=rwest);
-    (1 is Y-Y1, CurrentDirection=rnorth) -> (append(Moves,[[turnleft, turnleft, moveforward]], UpdatedMoves), ND=rsouth) ;
-    (1 is Y-Y1, CurrentDirection=rsouth) -> (append(Moves,[[moveforward]], UpdatedMoves), ND=rsouth) ;
-    (1 is Y-Y1, CurrentDirection=reast) -> (append(Moves,[[turnright, moveforward]], UpdatedMoves), ND=rsouth) ;
-    (1 is Y-Y1, CurrentDirection=rwest) -> (append(Moves,[[turnleft, moveforward]], UpdatedMoves), ND=rsouth) ;
-    (1 is Y1-Y, CurrentDirection=rnorth) -> (append(Moves,[[moveforward]], UpdatedMoves), ND=rnorth) ;
-    (1 is Y1-Y, CurrentDirection=rsouth) -> (append(Moves,[[turnleft, turnleft, moveforward]], UpdatedMoves), ND=rnorth) ;
-    (1 is Y1-Y, CurrentDirection=reast) -> (append(Moves,[[turnleft, moveforward]], UpdatedMoves), ND=rnorth) ;
-    (1 is Y1-Y, CurrentDirection=rwest) -> (append(Moves,[[turnright, moveforward]], UpdatedMoves), ND=rnorth)
+    (1 is X1-X, CurrentDirection=rnorth) -> (append(Moves, [turnright, moveforward], UpdatedMoves), ND=reast) ;
+    (1 is X1-X, CurrentDirection=rsouth) -> (append(Moves, [turnleft, moveforward], UpdatedMoves), ND=reast) ;
+    (1 is X1-X, CurrentDirection=reast) -> (append(Moves,[moveforward], UpdatedMoves) , ND=reast);
+    (1 is X1-X, CurrentDirection=rwest) -> (append(Moves,[turnleft, turnleft, moveforward], UpdatedMoves), ND=reast) ;
+    (1 is X-X1, CurrentDirection=rnorth) -> (append(Moves,[turnleft, moveforward], UpdatedMoves), ND=rwest) ;
+    (1 is X-X1, CurrentDirection=rsouth) -> (append(Moves,[turnright, moveforward], UpdatedMoves), ND=rwest) ;
+    (1 is X-X1, CurrentDirection=reast) -> (append(Moves,[turnleft, turnleft, moveforward], UpdatedMoves), ND=rwest) ;
+    (1 is X-X1, CurrentDirection=rwest) -> (append(Moves,[moveforward], UpdatedMoves), ND=rwest);
+    (1 is Y-Y1, CurrentDirection=rnorth) -> (append(Moves,[turnleft, turnleft, moveforward], UpdatedMoves), ND=rsouth) ;
+    (1 is Y-Y1, CurrentDirection=rsouth) -> (append(Moves,[moveforward], UpdatedMoves), ND=rsouth) ;
+    (1 is Y-Y1, CurrentDirection=reast) -> (append(Moves,[turnright, moveforward], UpdatedMoves), ND=rsouth) ;
+    (1 is Y-Y1, CurrentDirection=rwest) -> (append(Moves,[turnleft, moveforward], UpdatedMoves), ND=rsouth) ;
+    (1 is Y1-Y, CurrentDirection=rnorth) -> (append(Moves,[moveforward], UpdatedMoves), ND=rnorth) ;
+    (1 is Y1-Y, CurrentDirection=rsouth) -> (append(Moves,[turnleft, turnleft, moveforward], UpdatedMoves), ND=rnorth) ;
+    (1 is Y1-Y, CurrentDirection=reast) -> (append(Moves,[turnleft, moveforward], UpdatedMoves), ND=rnorth) ;
+    (1 is Y1-Y, CurrentDirection=rwest) -> (append(Moves,[turnright, moveforward], UpdatedMoves), ND=rnorth)
   ),
   convertPathToShoot(T, ND, UpdatedMoves, FinalMoves).
 
@@ -481,18 +469,14 @@ getRelativeAdjacentRooms(r(X,Y), D, L) :-
 
 getDirectionFromMove(A, D, ND) :-
   (
-    (A=[turnleft, moveforward], D=rnorth) -> ND = rwest ;
-    (A=[turnleft, moveforward], D=reast) -> ND = rnorth ;
-    (A=[turnleft, moveforward], D=rwest) -> ND = rsouth ;
-    (A=[turnleft, moveforward], D=rsouth) -> ND = reast ;
-    (A=[turnleft, turnleft, moveforward], D=rnorth) -> ND = rsouth ;
-    (A=[turnleft, turnleft, moveforward], D=reast) -> ND = rwest ;
-    (A=[turnleft, turnleft, moveforward], D=rwest) -> ND = reast ;
-    (A=[turnleft, turnleft, moveforward], D=rsouth) -> ND = rnorth ;
-    (A=[turnright, moveforward], D=rnorth) -> ND = reast ;
-    (A=[turnright, moveforward], D=reast) -> ND = rsouth ;
-    (A=[turnright, moveforward], D=rwest) -> ND = rnorth ;
-    (A=[turnright, moveforward], D=rsouth) -> ND = rwest ;
+    (A=turnleft, D=reast) -> ND = rnorth ;
+    (A=turnleft, D=rnorth) -> ND = rwest ;
+    (A=turnleft, D=rwest) -> ND = rsouth ;
+    (A=turnleft, D=rsouth) -> ND = reast ;
+    (A=turnright, D=rnorth) -> ND = reast ;
+    (A=turnright, D=reast) -> ND = rsouth ;
+    (A=turnright, D=rwest) -> ND = rnorth ;
+    (A=turnright, D=rsouth) -> ND = rwest ;
     ND = D
   ).
 
